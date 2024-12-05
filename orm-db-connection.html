@@ -1,0 +1,83 @@
+<script type="text/html" data-template-name="orm-db-connection">
+    <div class="form-row">
+        <label for="node-config-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-config-input-name" placeholder="Name">
+    </div>
+    <div class="form-row">
+        <label for="node-config-input-driver"><i class="fa fa-database"></i> Driver</label>
+        <select id="node-config-input-driver" placeholder="Select driver">
+            <option value="mysql">MySQL</option>
+            <option value="postgres">Postgres</option>
+            <option value="mssql">Sql Server</option>
+            <option value="mariadb">MariaDB</option>
+            <option value="sqlite">Sqlite</option>
+            <option value="oracle">Oracle</option>
+        </select>
+    </div>
+    <div class="form-row" id="node-config-input-host-div">
+        <label for="node-config-input-host"><i class="fa fa-server"></i> Host</label>
+        <input type="text" id="node-config-input-host" placeholder="Host">
+    </div>
+    <div class="form-row" id="node-config-input-username-div">
+        <label for="node-config-input-username"><i class="fa fa-user"></i> Username</label>
+        <input type="text" id="node-config-input-username" placeholder="Username">
+    </div>
+    <div class="form-row" id="node-config-input-password-div">
+        <label for="node-config-input-password"><i class="fa fa-eye-slash"></i> Password</label>
+        <input type="password" id="node-config-input-password" placeholder="Password">
+    </div>
+    <div class="form-row">
+        <label for="node-config-input-database"><i class="fa fa-database"></i> Database</label>
+        <input type="text" id="node-config-input-database" placeholder="Database name or path (Sqlite driver)">
+    </div>
+</script>
+<script type="text/javascript">
+    RED.nodes.registerType('orm-db-connection',{
+        category: 'config',
+        color: '#2196f3',
+        defaults: {
+            name: { value: '' },
+            driver: { value: '', required: true },
+            host: { value: '', validate:function(v) {
+                const driver = $("#node-config-input-driver").val()
+                if(driver && driver != 'sqlite' && !v)
+                    return false
+                return true
+            }},
+            username: { value: '', validate:function(v) {
+                const driver = $("#node-config-input-driver").val()
+                if(driver && driver != 'sqlite' && !v)
+                    return false
+                return true
+            } },
+            password: { value: '', validate:function(v) {
+                const driver = $("#node-config-input-driver").val()
+                if(driver && driver != 'sqlite' && !v)
+                    return false
+                return true
+            } },
+            database: { value: '', required: true }
+        },
+        label: function() {
+            return this.name || this.driver;
+        },
+        oneditprepare: function () {
+            $("#node-config-input-driver").on('change', function(event) {
+                const value = $("#node-config-input-driver").val()
+                if(!value) return
+                if(value == 'sqlite'){
+                    $("#node-config-input-host-div").hide()
+                    $("#node-config-input-username-div").hide()
+                    $("#node-config-input-password-div").hide()
+                } else {
+                    $("#node-config-input-host-div").show()
+                    $("#node-config-input-username-div").show()
+                    $("#node-config-input-password-div").show()
+                }
+            } );
+        },
+        oneditsave: function() {
+
+        }
+    });
+</script>

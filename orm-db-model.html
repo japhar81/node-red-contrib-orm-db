@@ -1,0 +1,234 @@
+<script type="text/html" data-template-name="orm-db-model">
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+        table, th, td {
+            border: 1px solid black;
+            padding: 5px;
+        }
+        .table-input{
+            width: 100%;
+        }
+    </style>
+    <div class="form-row">
+        <label for="node-config-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-config-input-name" placeholder="Name">
+    </div>
+    <div class="form-row">
+        <label for="node-config-input-name"><i class="fa fa-tag"></i> Table Name</label>
+        <input type="text" id="node-config-input-table" placeholder="Table Name">
+    </div>
+    <div class="form-row">
+        <label for="node-input-fields" style="min-width: 150px;"><i class="fa fa-list"></i> Fields Definition</label>
+        <button id="add-field" class="editor-button red-ui-button-small" style="float:right"><i class="fa fa-plus"></i> Add Field</button>
+        <table id="node-input-fields" class="table" style="width: 100%;">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Type</th>
+                    <th>Length</th>
+                    <th>Allow Null</th>
+                    <th>Primary Key</th>
+                    <th>Auto Increment</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+        
+    </div>
+    <div class="form-row">
+        <label><i class="fa fa-table"></i> Relationship</label>
+        <ol id="node-input-relationship"></ol>
+    </div>
+</script>
+<script type="text/javascript">
+
+    function addField(container, name, type,allowNull, primaryKey, autoIncrement, size) {
+        var row = $("<tr></tr>");
+        row.append(`<td><input name="name" required type="text" value="${name}" style="width:150px"></td>`);
+        row.append(`<td><select name="type" type="text" value="${type}" style="width:100%">
+            <option ${type == 'TEXT' ? 'selected' : ''} value="TEXT">TEXT</option>
+            <option ${type == 'UUID' ? 'selected' : ''} value="UUID">UUID</option>
+            <option ${type == 'TINYINT' ? 'selected' : ''} value="TINYINT">TINYINT</option>
+            <option ${type == 'STRING' ? 'selected' : ''} value="STRING">STRING</option>
+            <option ${type == 'SMALLINT' ? 'selected' : ''} value="SMALLINT">SMALLINT</option>
+            <option ${type == 'REAL' ? 'selected' : ''} value="REAL">REAL</option>
+            <option ${type == 'RANGE' ? 'selected' : ''} value="RANGE">RANGE</option>
+            <option ${type == 'NUMBER' ? 'selected' : ''} value="NUMBER">NUMBER</option>
+            <option ${type == 'NOW' ? 'selected' : ''} value="NOW">NOW</option>
+            <option ${type == 'MEDIUMINT' ? 'selected' : ''} value="MEDIUMINT">MEDIUMINT</option>
+            <option ${type == 'INTEGER' ? 'selected' : ''} value="INTEGER">INTEGER</option>
+            <option ${type == 'FLOAT' ? 'selected' : ''} value="FLOAT">FLOAT</option>
+            <option ${type == 'ENUM' ? 'selected' : ''} value="ENUM">ENUM</option>
+            <option ${type == 'DOUBLE' ? 'selected' : ''} value="DOUBLE">DOUBLE</option>
+            <option ${type == 'DECIMAL' ? 'selected' : ''} value="DECIMAL">DECIMAL</option>
+            <option ${type == 'DATEONLY' ? 'selected' : ''} value="DATEONLY">DATEONLY</option>
+            <option ${type == 'DATE' ? 'selected' : ''} value="DATE">DATE</option>
+            <option ${type == 'CHAR' ? 'selected' : ''} value="CHAR">CHAR</option>
+            <option ${type == 'BOOLEAN' ? 'selected' : ''} value="BOOLEAN">BOOLEAN</option>
+            <option ${type == 'BLOB' ? 'selected' : ''} value="BLOB">BLOB</option>
+            <option ${type == 'BIGINT' ? 'selected' : ''} value="BIGINT">BIGINT</option>
+            </select></td>`);
+        row.append(`<td><input type="number" name="size" value="${size}" style="width:70px"></td>`);
+        row.append('<td><input type="checkbox" name="allowNull" ' + (allowNull ? 'checked' : '') + '></td>');
+        row.append('<td><input type="checkbox" name="primary" ' + (primaryKey ? 'checked' : '') + '></td>');
+        row.append('<td><input type="checkbox" name="autoIncrement" ' + (autoIncrement ? 'checked' : '') + '></td>');
+        row.append('<td><button class="editor-button delete-field"><i class="fa fa-trash"></i></button></td>');
+        container.append(row);
+    }
+
+    function getAllModels() {
+        var nodes = RED.nodes.filterNodes(x=> true).filter(x=> x.type == 'orm-db' && x.queryType == 'table').map(x=> RED.nodes.node(x.model));
+        let result = []
+        nodes.forEach(x=>{
+            if( !x )
+                return
+            result.push({label: x.name || x.table, value: x.table})
+        })
+        return result
+    }
+
+    function insertRowRelationship(container, data, models){
+        container.css({
+            overflow: 'hidden',
+            whiteSpace: 'nowrap',
+            display: "flex",
+            "align-items":"center"
+        });
+        let inputRows = $('<div></div>',{style:"flex-grow:1"}).appendTo(container);
+        let column1 = $('<div></div>',{style:"display: inline-block;width:25%;"}).appendTo(inputRows);
+        let column2 = $('<div/>',{style:"display: inline-block;width:35%;padding-left:15px"}).appendTo(inputRows);
+        let column3 = $('<div/>',{style:"display: inline-block;width:35%;padding-left:15px"}).appendTo(inputRows);
+        
+        let selectAssociation = $('<select/>',{class:"node-input-association-value",style:"width:100%; text-align: center;"}).appendTo(column1);
+        selectAssociation.append($("<option></option>").val('HasOne').text('HasOne'));
+        selectAssociation.append($("<option></option>").val('BelongsTo').text('BelongsTo'));
+        selectAssociation.append($("<option></option>").val('HasMany').text('HasMany'));
+        selectAssociation.append($("<option></option>").val('BelongsToMany').text('BelongsToMany'));
+        if(data.association)
+            selectAssociation.val(data.association);
+
+        let selectModel = $('<select/>',{class:"node-input-model-value", style:"width:100%; text-align: center;"}).appendTo(column2);
+        const modelFields = getModelFields()
+        models.forEach(item=>{
+            selectModel.append($("<option></option>").val(item.value).text(item.label));
+        })
+        if(data.model)
+            selectModel.val(data.model);
+
+        let inputForeignKey = $('<input type="text" class="node-input-foreignkey-value" style="width:100%;"/>').appendTo(column3);
+        if(data.foreignKey)
+            inputForeignKey.val(data.foreignKey);
+    }
+
+    function getRelationships() {   
+        let relationships = []
+        try {
+            let orderItems = $("#node-input-relationship").editableList('items');
+            orderItems.each(function(i) {
+                const model = $(this).find(".node-input-model-value").val()
+                const association = $(this).find(".node-input-association-value").val()
+                const foreignKey = $(this).find(".node-input-foreignkey-value").val()
+                relationships.push({model, association, foreignKey})
+            });
+        } catch{}        
+        return relationships 
+    }
+
+    RED.nodes.registerType('orm-db-model',{
+        category: 'config',
+        color: '#2196f3',
+        defaults: {
+            name: { value: '' },
+            table: { value: '' , validate:function(v) {
+                if(!/^[a-zA-Z][a-zA-Z0-9_]{0,29}$/.test(v))
+                    return false
+                else return true
+            }},
+            fields: { value: [] , validate:function(v) {
+                const fields = GetDataFromTable()
+                if(ValidateFields(fields))
+                    return true
+                else return false
+            }},
+            relationship: { value:[] },
+        },
+        label: function() {
+            return this.name || this.table ;
+        },
+        oneditprepare: function () {
+            const fields = this.fields || [];
+            const relationship = this.relationship || [];
+            const models = getAllModels()
+              
+            let tableBody = $('#node-input-fields tbody')
+            fields.forEach(function(field) {
+                addField(tableBody, field.name, field.type, field.allowNull, field.primary, field.autoIncrement, field.size);
+            });
+            $(document).ready(function() {
+                if(Array.isArray(relationship)){
+                    relationship.forEach(x=>{
+                        $("#node-input-relationship").editableList('addItem', x); 
+                    })
+                }
+            });
+
+            
+
+            $("#add-field").click(function() {
+                addField(tableBody, "", "STRING", false, false, false, '');
+            });
+
+            tableBody.on("click", ".delete-field", function() {
+                $(this).closest("tr").remove();
+            });
+
+            $("#node-input-relationship").css('min-height','160px').editableList({
+                removable: true,
+                header: $('<div style="display:flex"></div>').append($.parseHTML("<div style='width:25%;display: inline; padding-left:15px'>Association</div><div style='width:35%;display: inline;'>Model</div><div style='width:35%;display: inline;'>Foreign Key</div>")),
+                addItem: function(container, index, data) {
+                    insertRowRelationship(container, data, models)
+                }
+            })
+        },
+        oneditsave: function() {
+            this.fields = GetDataFromTable()
+            this.relationship = getRelationships()
+            if(!/^[a-zA-Z][a-zA-Z0-9_]{0,29}$/.test(this.table))
+                RED.notify(`Invalid name for table "${this.table}"`, { type: "error", timeout: 5000 });
+            if(!ValidateFields(this.fields))
+                RED.notify(`Invalid fields for model "${this.table}"`, { type: "error", timeout: 5000 });
+        }
+    });
+
+    function GetDataFromTable() {
+        let table = document.getElementById('node-input-fields');
+        if(!table) return []
+        let rows = table.getElementsByTagName('tr');
+        let dataArray = [];
+        for (let i = 0; i < rows.length; i++) {
+            let row = rows[i];
+            let inputs = row.querySelectorAll('input, select');
+            if(!inputs.length)continue
+            let name = inputs[0].value;
+            let type = inputs[1].value;
+            let size = inputs[2].value;
+            let allowNull = inputs[3].checked;
+            let primary = inputs[4].checked;
+            let autoIncrement = inputs[5].checked;
+            dataArray.push({ name, type, allowNull, primary, autoIncrement, size });
+        }
+        return dataArray
+    }
+
+    function ValidateFields(fields) {
+        for (let i in fields) {
+            if(!/^[a-zA-Z][a-zA-Z0-9_]{0,29}$/.test(fields[i].name))
+                return false
+        }
+        return true
+    }
+</script>
