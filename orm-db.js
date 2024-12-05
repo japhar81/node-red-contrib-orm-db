@@ -429,7 +429,8 @@ function createRelationship() {
 }
 
 function notifyAuthenticate(key, value){
-    sequelize[key].fnAuthenticate.forEach(x=>{x.call(this,value)})
+    if(sequelize[key] && sequelize[key].fnAuthenticate && sequelize[key].fnAuthenticate.length)
+        sequelize[key].fnAuthenticate.forEach(x=>{x.call(this,value)})
 }
 
 function ChangeObject(old, current) {
