@@ -25,12 +25,13 @@ module.exports = function(RED) {
         this.order = config.order
         this.syncType = config.syncType
         let node = this;
-        //Si no existe ninguna instancia de Sequelize las creo
-        if(!Object.keys(sequelize).length){
+        
+        if(!databasesCache){
             let databases = getDatabaseNodes(RED)
+            sequelize = {}
             databases.forEach(async db=>{
                 try {
-                    sequelize[db.key] = createSequelizeInstance(db.server)                    
+                    sequelize[db.key] = createSequelizeInstance(db.server)               
                     db.models.forEach(model=>{
                         try {
                             createModelInstance(sequelize[db.key].instance, model)
@@ -51,63 +52,15 @@ module.exports = function(RED) {
                 node.error(error);
             }
             
-        }else if(node.queryType == 'table'){//Actualizo los cambios en la conexion o los modelos
-            const key = getKeyFromServer(node.server)
-            let databases = getDatabaseNodes(RED)
-            let modelChange = false
-            databases.forEach(async db=>{
-                try {
-                    //Si la instancia del servidor aun no existe la creo
-                    if(!sequelize[db.key]){
-                        sequelize[db.key] = createSequelizeInstance(db.server)
-                        db.models.forEach(model=>{
-                            createModelInstance(sequelize[db.key].instance, model)
-                            sequelize[db.key].definitionModel[model.table] = model
-                        })
-                        modelChange = true
-                        authenticate(db.key)
-                    } else {
-                        // Si la instancia ya existe verifico que si tuvo cambios 
-                        const changeServer = ChangeObject(sequelize[db.key].server, db.server)
-                        if(changeServer){
-                            sequelize[db.key] = createSequelizeInstance(db.server)
-                            authenticate(db.key)
-                        }
-                        db.models.forEach(model=>{
-                            if(!sequelize[db.key].instance.models[model.table] || ChangeObject(sequelize[db.key].definitionModel[model.table], model)){
-                                createModelInstance(sequelize[db.key].instance, model)
-                                sequelize[db.key].definitionModel[model.table] = model
-                                modelChange = true
-                            }
-                        })
-                    }
-                } catch (error) {
-                    node.error(error);
-                    notifyAuthenticate(db.key, false)
-                }
-                
-            })
-            
-            //Elimino las instancias de servidores que ya no se usan
-            sequelize = Object.keys(sequelize).reduce((acc,curr)=>{
-                if(databases.some(x=> x.key == curr))
-                    acc[curr] = sequelize[curr]
-                return acc
-            }, {})
-
-            if(modelChange){
-                try {
-                    createRelationship()
-                } catch (error) {
-                    node.error(error);
-                }
-            }
-
+        }
+         
+        const key = getKeyFromServer(node.server)
+        if(sequelize[key]){
             sequelize[key].fnAuthenticate.push(function(authenticate){
                 if(authenticate)
                     node.status({ fill: "green", shape: "ring", text: "Connected" });
                 else node.status({ fill: "red", shape: "ring", text: `Error` });
-            })            
+            })
         }
        
         
@@ -134,8 +87,7 @@ module.exports = function(RED) {
                         if(node.order && node.order.length){
                             options.order = node.order
                         }
-                        const data = await model.findAll(options)
-                        msg.payload = JSON.parse(JSON.stringify(data))
+                        msg.payload  = await model.findAll(options)
                     }break;
                     case 'findAndCountAll':{
                         let options = {}
@@ -154,8 +106,7 @@ module.exports = function(RED) {
                         if(node.order && node.order.length){
                             options.order = node.order
                         }
-                        const data = await model.findAndCountAll(options)
-                        msg.payload = data
+                        msg.payload = await model.findAndCountAll(options)
                     }break;
                     case 'add':{
                         let data = {}
@@ -165,8 +116,7 @@ module.exports = function(RED) {
                         let options = {}
                         if(msg.transaction && transactions[msg.transaction])
                             options.transaction = transactions[msg.transaction]
-                        let result = await model.create(data, options)
-                        msg.payload = JSON.parse(JSON.stringify(result))
+                        msg.payload = await model.create(data, options)
                     }break;
                     case 'update':{
                         let data = {}
@@ -179,8 +129,7 @@ module.exports = function(RED) {
                         }
                         if(msg.transaction && transactions[msg.transaction])
                             options.transaction = transactions[msg.transaction]
-                        let result = await model.update(data, options)
-                        msg.payload = result
+                        msg.payload = await model.update(data, options)
                     }break;
                     case 'delete':{
                         let options = {}
@@ -189,8 +138,7 @@ module.exports = function(RED) {
                         } 
                         if(msg.transaction && transactions[msg.transaction])
                             options.transaction = transactions[msg.transaction]
-                        let result = await model.destroy(options)
-                        msg.payload = result
+                        msg.payload = await model.destroy(options)
                     }break;
                     case 'findOne':{
                         let options = {}
@@ -200,8 +148,7 @@ module.exports = function(RED) {
                         if(node.attributes){
                             options.attributes = node.attributes.split(',')                            
                         }
-                        let result = await model.findOne(options)
-                        msg.payload = result
+                        msg.payload = await model.findOne(options)
                     }break;
                     case 'raw':{
                         const sequelizeKey = `${node.server.driver}-${node.server.host}-${node.server.database}`
@@ -209,40 +156,35 @@ module.exports = function(RED) {
                         if( node.dataType != 'bool' ){
                             options.replacements = node.dataType == 'json' ? RED.util.evaluateNodeProperty(this.data, 'json', this) : getValueByIndex(msg, this.data)
                         }
-                        let result = await sequelizeInstance.query(this.rawQuery, options)
-                        msg.payload = result[0]
+                        msg.payload = await sequelizeInstance.query(this.rawQuery, options)
                     }break;
                     case 'count':{
                         let options = {}
                         if(node.where && node.where.length){
                             options.where = convertToSequelizeWhere(node.where, msg)
                         } 
-                        let result = await model.count(options)
-                        msg.payload = result
+                        msg.payload = await model.count(options)
                     }break;
                     case 'max':{
                         let options = {}
                         if(node.where && node.where.length){
                             options.where = convertToSequelizeWhere(node.where, msg)
                         } 
-                        let result = await model.max(node.attributes, options)
-                        msg.payload = result
+                        msg.payload = await model.max(node.attributes, options)
                     }break;
                     case 'min':{
                         let options = {}
                         if(node.where && node.where.length){
                             options.where = convertToSequelizeWhere(node.where, msg)
                         } 
-                        let result = await model.min(node.attributes, options)
-                        msg.payload = result
+                        msg.payload = await model.min(node.attributes, options)
                     }break;
                     case 'sum':{
                         let options = {}
                         if(node.where && node.where.length){
                             options.where = convertToSequelizeWhere(node.where, msg)
                         } 
-                        let result = await model.sum(node.attributes, options)
-                        msg.payload = result
+                        msg.payload = await model.sum(node.attributes, options)
                     }break;
                     case 'btransaction':{
                         const t = await sequelizeInstance.transaction();
@@ -308,7 +250,7 @@ function getDatabaseNodes(RED) {
         return databasesCache
     let result = {}
     RED.nodes.eachNode(function(node){
-        if(node.type == 'orm-db' && node.queryType == 'table'){
+        if(node.type == 'orm-db'){
             const server = RED.nodes.getNode(node.server)
             const key = getKeyFromServer(server)
             if(!result[key]){
@@ -325,15 +267,18 @@ function getDatabaseNodes(RED) {
                     models: []
                 }
             }
-            const model = RED.nodes.getNode(node.model)
-            if(!result[key].models.some(x=> x.table == model.table)){
-                result[key].models.push({
-                    name: model.name,
-                    table: model.table,
-                    relationship: model.relationship,
-                    fields: model.fields
-                })
+            if(node.model){
+                const model = RED.nodes.getNode(node.model)
+                if(model && !result[key].models.some(x=> x.table == model.table)){
+                    result[key].models.push({
+                        name: model.name,
+                        table: model.table,
+                        relationship: model.relationship,
+                        fields: model.fields
+                    })
+                }
             }
+            
         }
     })
     databasesCache = Object.values(result)

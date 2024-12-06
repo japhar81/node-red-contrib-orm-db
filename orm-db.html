@@ -96,11 +96,6 @@
         $("#node-input-offset-div").hide()      
         $("#node-input-order-div").hide()
         $("#node-input-outputs").val(JSON.stringify({0:0, 1:1}))
-        $("#node-input-inputs").val(1)
-        $('#node-input-btn-server-edit').hide()
-        $('#node-input-btn-server-add').hide()
-        $('#node-input-btn-model-edit').hide()
-        $('#node-input-btn-model-add').hide()   
         $('#node-input-syncType-div').hide()   
     }
 
@@ -271,10 +266,10 @@
         defaults: {
             name: { value: "" },
             server: { value: '', type:"orm-db-connection", required: true },
-            queryType: { value: 'table', required: true },
+            queryType: { value: 'raw', required: true },
             model: { value: '', type:"orm-db-model", validate:function(v) {
                 const queryType = $("#node-input-queryType").typedInput('value')
-                if((!v || v =='_ADD_') && ['table','findAll','findOne','findAndCountAll','add','update','delete','count','sum','min','max'].some(x=> x == queryType))
+                if((!v || v =='_ADD_') && ['findAll','findOne','findAndCountAll','add','update','delete','count','sum','min','max'].some(x=> x == queryType))
                     return false
                 return true
             }},
@@ -335,10 +330,8 @@
             let currentModel = null
             $("#node-input-queryType").typedInput({
                 types:[{
-                    value: 'table',
+                    value: 'raw',
                     options: [
-                        { value: 'table', label: 'Create or Update Table'},
-                        { value: 'sync', label: 'Synchronize Tables'},
                         { value: 'raw', label: 'Raw'},
                         { value: 'findAll', label: 'Find All'},
                         { value: 'findAndCountAll', label: 'Find and Count All'},
@@ -353,6 +346,7 @@
                         { value: 'btransaction', label: 'Begin Transaction'},
                         { value: 'ctransaction', label: 'Commit Transaction'},
                         { value: 'rtransaction', label: 'Rollback Transaction'},
+                        { value: 'sync', label: 'Synchronize Tables'},
                     ]
                 }]
             })
@@ -448,15 +442,6 @@
                     }break;
                     case 'rtransaction':{
                         $("#node-input-outputs").val(JSON.stringify({0:0}))
-                    }break;
-                    case 'table':{
-                        $("#node-input-model-div").show()
-                        $("#node-input-inputs").val(0)
-                        $("#node-input-outputs").val(JSON.stringify({}))
-                        $('#node-input-btn-server-edit').show()
-                        $('#node-input-btn-server-add').show()
-                        $('#node-input-btn-model-edit').show()
-                        $('#node-input-btn-model-add').show()
                     }break;
                     case 'sync':{
                         $('#node-input-syncType-div').show()
@@ -596,7 +581,7 @@
                 setTimeout(x=>{_this.order = order}, 1)
             }
             const model = $("#node-input-model").val()
-            if((!model || model =='_ADD_') && ['table','findAll','findOne','findAndCountAll','add','update','delete','count','sum','min','max'].some(x=> x == queryType))
+            if((!model || model =='_ADD_') && ['findAll','findOne','findAndCountAll','add','update','delete','count','sum','min','max'].some(x=> x == queryType))
                 RED.notify('The "model" field cannot be empty.', { type: "error", timeout: 5000 });
             setTimeout(x=>{_this.outputs = _this.outputs}, 1)
 
@@ -634,39 +619,35 @@ ORM tool for Postgres, MySQL, MariaDB, SQLite, Microsoft SQL Server, Oracle Data
 ### Details
 
 The first step to using the node is to create the database connections and the models (database tables) to be used, 
-and then proceed to perform all database operations. You only need to create a node with the type 'Create or Update Table' and then configure the server and database model.
+and then proceed to perform all database operations.
 `msg.payload` is used as the payload of the published message.
 
 ### Operation Types
-
-1. **Create or Update Table**: This operation allows you to create or update database tables, enabling the creation of database connections and the structure of the tables. 
-For creating fields and supported data types, refer to the Sequelize documentation [Sequelize Data-Types](https://sequelize.org/docs/v6/core-concepts/model-basics/#data-types). 
-Similarly, follow the same procedure when creating relationships between different models [Sequelize Associations](https://sequelize.org/docs/v6/core-concepts/assocs/).
-2. **Synchronize Tables**: After creating the 'Create or Update Table' nodes, you can synchronize the models with the database using this type of node. 
+1. **Raw**: When queries are very complex and you can't handle them with the graphical interface, you can use this type of node to make direct queries to the database in SQL language. 
+It has a 'Data' field that allows variable replacements in the query; refer to the Sequelize documentation for more details [Raw Queries](https://sequelize.org/docs/v6/core-concepts/raw-queries/). 
+It's important to mention that it only supports replacements and not 'Bind Parameters'.
+2. **Find All**: Searches in the selected model for all elements of the table. It allows filtering the information by including a 'Where' clause where the expressions can be dynamic fields passed in the input messages. 
+If the 'Attributes' input does not have any fields selected, it will select all fields of the table. The 'Limit' and 'Offset' inputs will not be functional while set to 'false'; 
+otherwise, they can be used with dynamic data from the input messages.
+3. **Find and Count All**: Same as the previous one, but the result adds the total number of elements that meet the filtering criteria, if any.
+4. **Find One**: Finds the first element that meets the filtering criteria in the 'Where' clause. If the 'Attributes' input does not have any fields selected, it will select all fields of the table.
+5. **Add**: Allows adding elements to a table according to the selected model. The 'Data' input is used to configure the source of the data to be added, which can come from the input message in the node.
+6. **Update**: Allows updating elements in a table according to the selected model. The 'Data' input is used to configure the source of the data to be updated, which can come from the input message in the node. 
+You can specify the elements you want to update using the 'Where' input.
+7. **Delete**: Deletes elements from a table according to the selected model. It is possible to include filtering according to the 'Where' input.
+8. **Count**: Counts the elements in a table. It is also possible to include filtering by adding elements to the 'Where' input.
+9. **Sum**: Sums the elements in a table according to the selected model. The 'Attributes' input allows you to select the field of the model on which the sum operation will be performed. It is also possible to filter data using the 'Where' input.
+10. **Min**: Selects the minimum element from a table according to the selected model. The 'Attributes' input allows you to select the field of the model on which the minimum operation will be performed. It is also possible to filter data using the 'Where' input.
+11. **Max**: Selects the maximum element from a table according to the selected model. The 'Attributes' input allows you to select the field of the model on which the maximum operation will be performed. It is also possible to filter data using the 'Where' input.
+12. **Begin Transaction**: Transactions in relational databases are of utmost importance for data integrity. This type of node allows you to start a database transaction. 
+It has only one output port, leaving the input message to the node unchanged and adding the variable msg.transaction with the transaction identifier. 
+It is important to clarify that transactions should only be used with operations that make changes to the database, such as 'add', 'update', and 'delete'. For other operations, transactions have no effect.
+13. **Commit Transaction**: Completes the transaction when the operations of previous nodes are successful.
+14. **Rollback Transaction**: Completes the transaction when the operations of previous nodes result in an error.
+15. **Synchronize Tables**: After creating the connections and models, you can synchronize the models with the database using this type of node. 
 There are three ways to synchronize the models with the database; refer to the Sequelize documentation [Sequelize Model Synchronization](https://sequelize.org/docs/v6/core-concepts/model-basics/#model-synchronization). 
 Using the node is optional since you may already have the database created, and its use in production can be very dangerous. When you use a node of this type, it has an input port which you can call from an 'inject' node, and it has two output ports: 
 the first is used to indicate that the synchronization was successful, and the second for errors.
-3. **Raw**: When queries are very complex and you can't handle them with the graphical interface, you can use this type of node to make direct queries to the database in SQL language. 
-It has a 'Data' field that allows variable replacements in the query; refer to the Sequelize documentation for more details [Raw Queries](https://sequelize.org/docs/v6/core-concepts/raw-queries/). 
-It's important to mention that it only supports replacements and not 'Bind Parameters'.
-4. **Find All**: Searches in the selected model for all elements of the table. It allows filtering the information by including a 'Where' clause where the expressions can be dynamic fields passed in the input messages. 
-If the 'Attributes' input does not have any fields selected, it will select all fields of the table. The 'Limit' and 'Offset' inputs will not be functional while set to 'false'; 
-otherwise, they can be used with dynamic data from the input messages.
-5. **Find and Count All**: Same as the previous one, but the result adds the total number of elements that meet the filtering criteria, if any.
-6. **Find One**: Finds the first element that meets the filtering criteria in the 'Where' clause. If the 'Attributes' input does not have any fields selected, it will select all fields of the table.
-7. **Add**: Allows adding elements to a table according to the selected model. The 'Data' input is used to configure the source of the data to be added, which can come from the input message in the node.
-8. **Update**: Allows updating elements in a table according to the selected model. The 'Data' input is used to configure the source of the data to be updated, which can come from the input message in the node. 
-You can specify the elements you want to update using the 'Where' input.
-8. **Delete**: Deletes elements from a table according to the selected model. It is possible to include filtering according to the 'Where' input.
-9. **Count**: Counts the elements in a table. It is also possible to include filtering by adding elements to the 'Where' input.
-10. **Sum**: Sums the elements in a table according to the selected model. The 'Attributes' input allows you to select the field of the model on which the sum operation will be performed. It is also possible to filter data using the 'Where' input.
-11. **Min**: Selects the minimum element from a table according to the selected model. The 'Attributes' input allows you to select the field of the model on which the minimum operation will be performed. It is also possible to filter data using the 'Where' input.
-12. **Max**: Selects the maximum element from a table according to the selected model. The 'Attributes' input allows you to select the field of the model on which the maximum operation will be performed. It is also possible to filter data using the 'Where' input.
-13. **Begin Transaction**: Transactions in relational databases are of utmost importance for data integrity. This type of node allows you to start a database transaction. 
-It has only one output port, leaving the input message to the node unchanged and adding the variable msg.transaction with the transaction identifier. 
-It is important to clarify that transactions should only be used with operations that make changes to the database, such as 'add', 'update', and 'delete'. For other operations, transactions have no effect.
-14. **Commit Transaction**: Completes the transaction when the operations of previous nodes are successful.
-15. **Rollback Transaction**: Completes the transaction when the operations of previous nodes result in an error.
 
 ### References
 
