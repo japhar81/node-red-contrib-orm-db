@@ -3,7 +3,7 @@
         <label><i class="fa fa-tag"></i> Name</label>
         <input type="text" id="node-input-name" placeholder="Name">
     </div>
-    <div class="form-row">
+    <div class="form-row" id="node-input-server-div">
         <label><i class="fa fa-database"></i> Server</label>
         <input type="text" id="node-input-server" placeholder="Server">
     </div>
@@ -87,6 +87,7 @@
 
 
     function hideAllInput(){
+        $("#node-input-server-div").hide()
         $("#node-input-model-div").hide()
         $("#node-input-rawQuery-editor-div").hide()
         $("#node-input-data-div").hide()     
@@ -265,9 +266,15 @@
         color: '#2196f3',
         defaults: {
             name: { value: "" },
-            server: { value: '', type:"orm-db-connection", required: true },
+            server: { value: '', type:"orm-db-connection", validate:function(v) {
+                console.log('Value: ', v);
+                const queryType = $("#node-input-queryType").typedInput('value')
+                if((!v || v =='_ADD_') && ['raw','btransaction','ctransaction','rtransaction','sync'].some(x=> x == queryType))
+                    return false
+                return true
+            }},
             queryType: { value: 'raw', required: true },
-            model: { value: '', type:"orm-db-model", validate:function(v) {
+            model: { value: '', validate:function(v) {
                 const queryType = $("#node-input-queryType").typedInput('value')
                 if((!v || v =='_ADD_') && ['findAll','findOne','findAndCountAll','add','update','delete','count','sum','min','max'].some(x=> x == queryType))
                     return false
@@ -327,6 +334,14 @@
         },
         oneditprepare: function () {
             let _this = this
+            $.getJSON('orm-db-model-nodes', function(configNodes) {
+                $("#node-input-model").css('width','70%').typedInput({
+                    types:[{
+                        value: _this.model,
+                        options: configNodes.map(x=> { return { value: x.id, label: x.name}})
+                    }]
+                })               
+            });
             let currentModel = null
             $("#node-input-queryType").typedInput({
                 types:[{
@@ -373,6 +388,7 @@
                     case 'raw':{
                         $("#node-input-rawQuery-editor-div").show()
                         $("#node-input-data-div").show()
+                        $("#node-input-server-div").show()
                     }break;
                     case 'findAll':{
                         $("#node-input-model-div").show()
@@ -435,15 +451,19 @@
                         createAttributeInput(false)
                     }break;
                     case 'btransaction':{
+                        $("#node-input-server-div").show()
                         $("#node-input-outputs").val(JSON.stringify({0:0}))
                     }break;
                     case 'ctransaction':{
+                        $("#node-input-server-div").show()
                         $("#node-input-outputs").val(JSON.stringify({0:0}))
                     }break;
                     case 'rtransaction':{
+                        $("#node-input-server-div").show()
                         $("#node-input-outputs").val(JSON.stringify({0:0}))
                     }break;
                     case 'sync':{
+                        $("#node-input-server-div").show()
                         $('#node-input-syncType-div').show()
                     }break;
                 }
@@ -559,6 +579,10 @@
                 if(_this.attributes)
                     $("#node-input-attributes").typedInput('value', _this.attributes)
             }
+            //Oculto los botones de editar la variable servidor
+            $('#node-input-btn-server-edit').hide()
+            $('#node-input-btn-server-add').hide()
+            
                   
             
         },

@@ -35,6 +35,12 @@
     "url": "git+https://github.com/asielh1n1/node-red-contrib-orm-db.git"
   },
   "dependencies": {
-    "sequelize": "^6.37.5"
+    "sequelize": "^6.37.5",
+    "mysql2": "^3.12.0",
+    "oracledb": "^6.7.1",
+    "pg": "^8.13.1",
+    "pg-hstore": "^2.3.4",
+    "sqlite3": "^5.1.7",
+    "tedious": "^18.6.1"
   }
 }

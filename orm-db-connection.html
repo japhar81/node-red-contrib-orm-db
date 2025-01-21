@@ -56,7 +56,12 @@
                     return false
                 return true
             } },
-            database: { value: '', required: true }
+            database: { value: '', validate:function(v) {
+                const driver = $("#node-config-input-driver").val()
+                if(driver && driver != 'sqlite' && !v)
+                    return false
+                return true
+            } }
         },
         label: function() {
             return this.name || this.driver;

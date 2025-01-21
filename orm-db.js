@@ -3,13 +3,36 @@ const { Sequelize, Model, DataTypes, Op, HasOne } = require('sequelize');
 const { v4: uuid } = require('uuid');
 let sequelize = {}
 let transactions = {}
-let time = Date.now()
-let databasesCache = null
 
 
 module.exports = function(RED) {
+    RED.events.on('flows:started', function() {
+        let databases = getDatabaseNodes(RED)
+        sequelize = {}
+        databases.forEach(async db=>{
+            try {
+                sequelize[db.key] = createSequelizeInstance(db.server)
+                db.models.forEach(model=>{
+                    try {
+                        createModelInstance(sequelize[db.key].instance, model)
+                        sequelize[db.key].definitionModel[model.table] = model
+                    } catch (error) {
+                        RED.log.error(`Error in model definition: ${model.table}. ${error.message}`);
+                    }
+                })                                    
+            } catch (error) {
+                RED.log.error(`Error creating sequelize instance. ${error.message}`)
+            }
+        })
+        try {
+            createRelationship()
+        } catch (error) {
+            RED.log.error(`Error creating relations in sequelize. ${error.message}`)
+        }
+    });
+    
     function OrmDb(config) {
-        RED.nodes.createNode(this,config);
+        RED.nodes.createNode(this, config);
         this.server = RED.nodes.getNode(config.server);
         this.model = RED.nodes.getNode(config.model);
         this.queryType = config.queryType
@@ -25,43 +48,6 @@ module.exports = function(RED) {
         this.order = config.order
         this.syncType = config.syncType
         let node = this;
-        
-        if(!databasesCache){
-            let databases = getDatabaseNodes(RED)
-            sequelize = {}
-            databases.forEach(async db=>{
-                try {
-                    sequelize[db.key] = createSequelizeInstance(db.server)               
-                    db.models.forEach(model=>{
-                        try {
-                            createModelInstance(sequelize[db.key].instance, model)
-                            sequelize[db.key].definitionModel[model.table] = model
-                        } catch (error) {
-                            node.error(`Error in model definition: ${model.table}`, error);
-                        }
-                    })
-                    authenticate(db.key)                                     
-                } catch (error) {
-                    notifyAuthenticate(db.key, false)
-                    node.error(error);
-                }
-            })
-            try {
-                createRelationship()
-            } catch (error) {
-                node.error(error);
-            }
-            
-        }
-         
-        const key = getKeyFromServer(node.server)
-        if(sequelize[key]){
-            sequelize[key].fnAuthenticate.push(function(authenticate){
-                if(authenticate)
-                    node.status({ fill: "green", shape: "ring", text: "Connected" });
-                else node.status({ fill: "red", shape: "ring", text: `Error` });
-            })
-        }
        
         
         node.on('input', async function(msg) {
@@ -116,7 +102,8 @@ module.exports = function(RED) {
                         let options = {}
                         if(msg.transaction && transactions[msg.transaction])
                             options.transaction = transactions[msg.transaction]
-                        msg.payload = await model.create(data, options)
+                        const result = await model.create(data, options)
+                        msg.payload = !result ? result : result.toJSON()
                     }break;
                     case 'update':{
                         let data = {}
@@ -129,7 +116,8 @@ module.exports = function(RED) {
                         }
                         if(msg.transaction && transactions[msg.transaction])
                             options.transaction = transactions[msg.transaction]
-                        msg.payload = await model.update(data, options)
+                        const result = await model.update(data, options)
+                        msg.payload = Array.isArray(result) && result.length && result[0] ? true : false
                     }break;
                     case 'delete':{
                         let options = {}
@@ -138,7 +126,8 @@ module.exports = function(RED) {
                         } 
                         if(msg.transaction && transactions[msg.transaction])
                             options.transaction = transactions[msg.transaction]
-                        msg.payload = await model.destroy(options)
+                        const result = await model.destroy(options)
+                        msg.payload = result ? true : false
                     }break;
                     case 'findOne':{
                         let options = {}
@@ -148,15 +137,16 @@ module.exports = function(RED) {
                         if(node.attributes){
                             options.attributes = node.attributes.split(',')                            
                         }
-                        msg.payload = await model.findOne(options)
+                        const result = await model.findOne(options)
+                        msg.payload = !result ? result : result.toJSON()
                     }break;
                     case 'raw':{
-                        const sequelizeKey = `${node.server.driver}-${node.server.host}-${node.server.database}`
                         let options = {}
                         if( node.dataType != 'bool' ){
                             options.replacements = node.dataType == 'json' ? RED.util.evaluateNodeProperty(this.data, 'json', this) : getValueByIndex(msg, this.data)
                         }
-                        msg.payload = await sequelizeInstance.query(this.rawQuery, options)
+                        const result = await sequelizeInstance.query(this.rawQuery, options)
+                        msg.payload = result[0]
                     }break;
                     case 'count':{
                         let options = {}
@@ -220,7 +210,7 @@ module.exports = function(RED) {
                             if(node.syncType == 'alter' || node.syncType == 'force')
                                 options[node.syncType] = true
                             node.status({ fill: 'yellow', shape: 'ring', text: 'Synchronizing' });
-                            await sequelizeInstance.sync({ alter: true })
+                            await sequelizeInstance.sync(options)
                             node.status({ fill: 'green', shape: 'ring', text: 'Success' });
                         } catch (error) {
                             node.status({ fill: 'red', shape: 'ring', text: 'Error' });
@@ -239,18 +229,13 @@ module.exports = function(RED) {
             
         });
     }
-
-    
-
     RED.nodes.registerType("orm-db",OrmDb);
 }
 
 function getDatabaseNodes(RED) {
-    if((Date.now() - time) <= 1000 && databasesCache)
-        return databasesCache
     let result = {}
     RED.nodes.eachNode(function(node){
-        if(node.type == 'orm-db'){
+        if(node.type == 'orm-db-model'){
             const server = RED.nodes.getNode(node.server)
             const key = getKeyFromServer(server)
             if(!result[key]){
@@ -264,29 +249,21 @@ function getDatabaseNodes(RED) {
                         password: server.password,
                         database: server.database
                     },
-                    models: []
+                    models: [],
+                    node: node
                 }
             }
-            if(node.model){
-                const model = RED.nodes.getNode(node.model)
-                if(model && !result[key].models.some(x=> x.table == model.table)){
-                    result[key].models.push({
-                        name: model.name,
-                        table: model.table,
-                        relationship: model.relationship,
-                        fields: model.fields
-                    })
-                }
+            if(!result[key].models.some(x=> x.table == node.table)){
+                result[key].models.push({
+                    name: node.name,
+                    table: node.table,
+                    relationship: node.relationship,
+                    fields: node.fields
+                })
             }
-            
         }
     })
-    databasesCache = Object.values(result)
-    setTimeout(x=>{
-        time = Date.now()
-        databasesCache = null
-    }, 1000)
-    return databasesCache
+    return Object.values(result)
 }
 
 function getKeyFromServer(server){
@@ -304,18 +281,17 @@ function createSequelizeInstance(server){
                 dialect: server.driver
             }),
         definitionModel: {},
-        server: server,
-        fnAuthenticate:[]
+        server: server
     }
 }
 
-function authenticate(key){
+function authenticate(key, node){
     sequelize[key].instance.authenticate()
         .then(x=>{
-            notifyAuthenticate(key, true)
+            node.status({ fill: "green", shape: "ring", text: "Connected" });
         })
         .catch(e=>{
-            notifyAuthenticate(key, false)
+            node.status({ fill: "red", shape: "ring", text: `Error` });
         })
 }
 
@@ -364,6 +340,7 @@ function createRelationship() {
                                 acc.push(curr)
                             return acc
                         }, [])
+                        
                         options.through = tableName.join('_')
                         sequelize[i].instance.models[j].belongsToMany(sequelize[i].instance.models[r.model], options)
                     }break;
@@ -373,10 +350,6 @@ function createRelationship() {
     }
 }
 
-function notifyAuthenticate(key, value){
-    if(sequelize[key] && sequelize[key].fnAuthenticate && sequelize[key].fnAuthenticate.length)
-        sequelize[key].fnAuthenticate.forEach(x=>{x.call(this,value)})
-}
 
 function ChangeObject(old, current) {
     if(JSON.stringify(old) !== JSON.stringify(current))
