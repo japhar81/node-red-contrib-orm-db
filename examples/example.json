@@ -1,758 +1,162 @@
 [
     {
-        "id": "e495c177d14d0b11",
+        "id": "522bc7401194a938",
         "type": "tab",
-        "label": "ORM Example",
+        "label": "Flow 1",
         "disabled": false,
         "info": "",
         "env": []
     },
     {
-        "id": "428fc8961defaa39",
-        "type": "http in",
-        "z": "e495c177d14d0b11",
-        "name": "",
-        "url": "/api/user",
-        "method": "get",
-        "upload": false,
-        "swaggerDoc": "",
-        "x": 150,
-        "y": 80,
-        "wires": [
-            [
-                "a8c68a79200c1dcd"
-            ]
-        ]
-    },
-    {
-        "id": "a8c68a79200c1dcd",
-        "type": "orm-db",
-        "z": "e495c177d14d0b11",
-        "name": "",
-        "server": "a71510fea98254e9",
-        "queryType": "findAll",
-        "model": "49c4af9594b609ec",
-        "rawQuery": "",
-        "where": [],
-        "attributes": "",
-        "limit": "false",
-        "limitType": "bool",
-        "offset": "false",
-        "offsetType": "bool",
-        "data": "false",
-        "dataType": "bool",
-        "order": [],
-        "outputs": 2,
-        "inputs": 1,
-        "syncType": "create",
-        "x": 380,
-        "y": 80,
-        "wires": [
-            [
-                "2988dedb39791bd9"
-            ],
-            [
-                "365f98582873489c"
-            ]
-        ]
-    },
-    {
-        "id": "2988dedb39791bd9",
-        "type": "http response",
-        "z": "e495c177d14d0b11",
-        "name": "",
-        "statusCode": "200",
-        "headers": {},
-        "x": 1200,
-        "y": 340,
-        "wires": []
-    },
-    {
-        "id": "365f98582873489c",
-        "type": "http response",
-        "z": "e495c177d14d0b11",
-        "name": "",
-        "statusCode": "500",
-        "headers": {},
-        "x": 1200,
-        "y": 460,
-        "wires": []
-    },
-    {
-        "id": "1327254cd8f228d0",
-        "type": "http in",
-        "z": "e495c177d14d0b11",
-        "name": "",
-        "url": "/api/user/one/:id",
-        "method": "get",
-        "upload": false,
-        "swaggerDoc": "",
-        "x": 180,
-        "y": 140,
-        "wires": [
-            [
-                "96a259af34c03578"
-            ]
-        ]
-    },
-    {
-        "id": "96a259af34c03578",
-        "type": "orm-db",
-        "z": "e495c177d14d0b11",
-        "name": "FindById",
-        "server": "a71510fea98254e9",
-        "queryType": "findOne",
-        "model": "49c4af9594b609ec",
-        "rawQuery": "",
-        "where": [
-            {
-                "logic1": "none",
-                "field": "id",
-                "expression": "eq",
-                "value": "req.params.id",
-                "logic2": "none",
-                "valueType": "msg"
-            }
+        "id": "f01751929aa78bc7",
+        "type": "group",
+        "z": "522bc7401194a938",
+        "style": {
+            "stroke": "#999999",
+            "stroke-opacity": "1",
+            "fill": "none",
+            "fill-opacity": "1",
+            "label": true,
+            "label-position": "nw",
+            "color": "#a4a4a4"
+        },
+        "nodes": [
+            "e4ebf7dcb10d250f",
+            "968e4a3301609a8e",
+            "5e408f76b2eab362"
         ],
-        "attributes": "id,username,email",
-        "limit": "false",
-        "limitType": "bool",
-        "offset": "false",
-        "offsetType": "bool",
-        "data": "false",
-        "dataType": "bool",
-        "order": [],
-        "outputs": 2,
-        "inputs": 1,
-        "syncType": "create",
-        "x": 390,
-        "y": 140,
-        "wires": [
-            [
-                "2988dedb39791bd9"
-            ],
-            [
-                "365f98582873489c"
-            ]
-        ]
+        "x": 74,
+        "y": 39,
+        "w": 292,
+        "h": 122
     },
     {
-        "id": "b3c7d79fdd73bc1b",
-        "type": "http in",
-        "z": "e495c177d14d0b11",
-        "name": "",
-        "url": "/api/user",
-        "method": "post",
-        "upload": false,
-        "swaggerDoc": "",
-        "x": 160,
-        "y": 200,
-        "wires": [
-            [
-                "bbc5f57aa998e740"
-            ]
-        ]
-    },
-    {
-        "id": "bbc5f57aa998e740",
-        "type": "orm-db",
-        "z": "e495c177d14d0b11",
-        "name": "",
-        "server": "a71510fea98254e9",
-        "queryType": "add",
-        "model": "49c4af9594b609ec",
-        "rawQuery": "",
-        "where": [],
-        "attributes": "id",
-        "limit": "false",
-        "limitType": "bool",
-        "offset": "false",
-        "offsetType": "bool",
-        "data": "payload",
-        "dataType": "msg",
-        "order": [],
-        "outputs": 2,
-        "inputs": 1,
-        "syncType": "create",
-        "x": 370,
-        "y": 200,
-        "wires": [
-            [
-                "2988dedb39791bd9"
-            ],
-            [
-                "365f98582873489c"
-            ]
-        ]
-    },
-    {
-        "id": "1b3bc4b1127e6211",
-        "type": "http in",
-        "z": "e495c177d14d0b11",
-        "name": "",
-        "url": "/api/user",
-        "method": "put",
-        "upload": false,
-        "swaggerDoc": "",
-        "x": 150,
-        "y": 260,
-        "wires": [
-            [
-                "25b0ffa6a1a8d736"
-            ]
-        ]
-    },
-    {
-        "id": "25b0ffa6a1a8d736",
-        "type": "orm-db",
-        "z": "e495c177d14d0b11",
-        "name": "",
-        "server": "a71510fea98254e9",
-        "queryType": "update",
-        "model": "49c4af9594b609ec",
-        "rawQuery": "",
-        "where": [
+        "id": "e4ebf7dcb10d250f",
+        "type": "orm-db-model",
+        "z": "522bc7401194a938",
+        "g": "f01751929aa78bc7",
+        "name": "User",
+        "server": "95346b16fb89f617",
+        "table": "user",
+        "fields": [
             {
-                "logic1": "none",
-                "field": "id",
-                "expression": "eq",
-                "value": "payload.id",
-                "logic2": "none",
-                "valueType": "msg"
-            }
-        ],
-        "attributes": "id",
-        "limit": "false",
-        "limitType": "bool",
-        "offset": "false",
-        "offsetType": "bool",
-        "data": "payload",
-        "dataType": "msg",
-        "order": [],
-        "outputs": 2,
-        "inputs": 1,
-        "syncType": "create",
-        "x": 380,
-        "y": 260,
-        "wires": [
-            [
-                "2988dedb39791bd9"
-            ],
-            [
-                "365f98582873489c"
-            ]
-        ]
-    },
-    {
-        "id": "2a296ec55ab3411b",
-        "type": "orm-db",
-        "z": "e495c177d14d0b11",
-        "name": "",
-        "server": "a71510fea98254e9",
-        "queryType": "delete",
-        "model": "49c4af9594b609ec",
-        "rawQuery": "",
-        "where": [
-            {
-                "logic1": "none",
-                "field": "id",
-                "expression": "eq",
-                "value": "req.params.id",
-                "logic2": "none",
-                "valueType": "msg"
-            }
-        ],
-        "attributes": "id",
-        "limit": "false",
-        "limitType": "bool",
-        "offset": "false",
-        "offsetType": "bool",
-        "data": "false",
-        "dataType": "bool",
-        "order": [],
-        "outputs": 2,
-        "inputs": 1,
-        "syncType": "create",
-        "x": 380,
-        "y": 320,
-        "wires": [
-            [
-                "2988dedb39791bd9"
-            ],
-            [
-                "365f98582873489c"
-            ]
-        ]
-    },
-    {
-        "id": "26d5ce6b765b9f54",
-        "type": "http in",
-        "z": "e495c177d14d0b11",
-        "name": "",
-        "url": "/api/user/:id",
-        "method": "delete",
-        "upload": false,
-        "swaggerDoc": "",
-        "x": 170,
-        "y": 320,
-        "wires": [
-            [
-                "2a296ec55ab3411b"
-            ]
-        ]
-    },
-    {
-        "id": "7a8086e146183365",
-        "type": "http in",
-        "z": "e495c177d14d0b11",
-        "name": "",
-        "url": "/api/user/count",
-        "method": "get",
-        "upload": false,
-        "swaggerDoc": "",
-        "x": 170,
-        "y": 380,
-        "wires": [
-            [
-                "a5a1a140644338f2"
-            ]
-        ]
-    },
-    {
-        "id": "a5a1a140644338f2",
-        "type": "orm-db",
-        "z": "e495c177d14d0b11",
-        "name": "",
-        "server": "a71510fea98254e9",
-        "queryType": "count",
-        "model": "49c4af9594b609ec",
-        "rawQuery": "",
-        "where": [],
-        "attributes": "id",
-        "limit": "false",
-        "limitType": "bool",
-        "offset": "false",
-        "offsetType": "bool",
-        "data": "false",
-        "dataType": "bool",
-        "order": [],
-        "outputs": 2,
-        "inputs": 1,
-        "syncType": "create",
-        "x": 380,
-        "y": 380,
-        "wires": [
-            [
-                "2988dedb39791bd9"
-            ],
-            [
-                "365f98582873489c"
-            ]
-        ]
-    },
-    {
-        "id": "ab8dd3ba32607dec",
-        "type": "http in",
-        "z": "e495c177d14d0b11",
-        "name": "",
-        "url": "/api/user/max",
-        "method": "get",
-        "upload": false,
-        "swaggerDoc": "",
-        "x": 170,
-        "y": 440,
-        "wires": [
-            [
-                "de867b6f23be58d3"
-            ]
-        ]
-    },
-    {
-        "id": "de867b6f23be58d3",
-        "type": "orm-db",
-        "z": "e495c177d14d0b11",
-        "name": "",
-        "server": "a71510fea98254e9",
-        "queryType": "max",
-        "model": "49c4af9594b609ec",
-        "rawQuery": "",
-        "where": [],
-        "attributes": "id",
-        "limit": "false",
-        "limitType": "bool",
-        "offset": "false",
-        "offsetType": "bool",
-        "data": "false",
-        "dataType": "bool",
-        "order": [],
-        "outputs": 2,
-        "inputs": 1,
-        "syncType": "create",
-        "x": 380,
-        "y": 440,
-        "wires": [
-            [
-                "2988dedb39791bd9"
-            ],
-            [
-                "365f98582873489c"
-            ]
-        ]
-    },
-    {
-        "id": "83969f8155228867",
-        "type": "http in",
-        "z": "e495c177d14d0b11",
-        "name": "",
-        "url": "/api/user/min",
-        "method": "get",
-        "upload": false,
-        "swaggerDoc": "",
-        "x": 170,
-        "y": 500,
-        "wires": [
-            [
-                "60370e2900a91527"
-            ]
-        ]
-    },
-    {
-        "id": "60370e2900a91527",
-        "type": "orm-db",
-        "z": "e495c177d14d0b11",
-        "name": "",
-        "server": "a71510fea98254e9",
-        "queryType": "min",
-        "model": "49c4af9594b609ec",
-        "rawQuery": "",
-        "where": [
-            {
-                "logic1": "none",
-                "field": "id",
-                "expression": "gt",
-                "value": "3",
-                "logic2": "none",
-                "valueType": "num"
-            }
-        ],
-        "attributes": "id",
-        "limit": "false",
-        "limitType": "bool",
-        "offset": "false",
-        "offsetType": "bool",
-        "data": "false",
-        "dataType": "bool",
-        "order": [],
-        "outputs": 2,
-        "inputs": 1,
-        "syncType": "create",
-        "x": 370,
-        "y": 500,
-        "wires": [
-            [
-                "2988dedb39791bd9"
-            ],
-            [
-                "365f98582873489c"
-            ]
-        ]
-    },
-    {
-        "id": "2e71ad5a4cd7c0ac",
-        "type": "http in",
-        "z": "e495c177d14d0b11",
-        "name": "",
-        "url": "/api/user/sum",
-        "method": "get",
-        "upload": false,
-        "swaggerDoc": "",
-        "x": 170,
-        "y": 560,
-        "wires": [
-            [
-                "d9424fe772395d58"
-            ]
-        ]
-    },
-    {
-        "id": "d9424fe772395d58",
-        "type": "orm-db",
-        "z": "e495c177d14d0b11",
-        "name": "",
-        "server": "a71510fea98254e9",
-        "queryType": "sum",
-        "model": "49c4af9594b609ec",
-        "rawQuery": "",
-        "where": [
-            {
-                "logic1": "none",
-                "field": "username",
-                "expression": "substring",
-                "value": "a",
-                "logic2": "none",
-                "valueType": "str"
+                "name": "id",
+                "type": "INTEGER",
+                "allowNull": false,
+                "primary": true,
+                "autoIncrement": true,
+                "size": ""
             },
             {
-                "logic1": "and",
-                "field": "id",
-                "expression": "gt",
-                "value": "2",
-                "logic2": "none",
-                "valueType": "num"
-            }
-        ],
-        "attributes": "id",
-        "limit": "false",
-        "limitType": "bool",
-        "offset": "false",
-        "offsetType": "bool",
-        "data": "false",
-        "dataType": "bool",
-        "order": [],
-        "outputs": 2,
-        "inputs": 1,
-        "syncType": "create",
-        "x": 380,
-        "y": 560,
-        "wires": [
-            [
-                "2988dedb39791bd9"
-            ],
-            [
-                "365f98582873489c"
-            ]
-        ]
-    },
-    {
-        "id": "e7e7288fc0494c3c",
-        "type": "http in",
-        "z": "e495c177d14d0b11",
-        "name": "",
-        "url": "/api/user/raw",
-        "method": "get",
-        "upload": false,
-        "swaggerDoc": "",
-        "x": 170,
-        "y": 620,
-        "wires": [
-            [
-                "6f02747907755be0"
-            ]
-        ]
-    },
-    {
-        "id": "6f02747907755be0",
-        "type": "orm-db",
-        "z": "e495c177d14d0b11",
-        "name": "",
-        "server": "a71510fea98254e9",
-        "queryType": "raw",
-        "model": "",
-        "rawQuery": "select * from user",
-        "where": [],
-        "attributes": [],
-        "limit": "false",
-        "limitType": "bool",
-        "offset": "false",
-        "offsetType": "bool",
-        "data": "false",
-        "dataType": "bool",
-        "order": [],
-        "outputs": 2,
-        "inputs": 1,
-        "syncType": "create",
-        "x": 370,
-        "y": 620,
-        "wires": [
-            [
-                "2988dedb39791bd9"
-            ],
-            [
-                "365f98582873489c"
-            ]
-        ]
-    },
-    {
-        "id": "1d9f33b34bf40642",
-        "type": "http in",
-        "z": "e495c177d14d0b11",
-        "name": "",
-        "url": "/api/user/transaction",
-        "method": "post",
-        "upload": false,
-        "swaggerDoc": "",
-        "x": 190,
-        "y": 680,
-        "wires": [
-            [
-                "027cc512fcdc4a53"
-            ]
-        ]
-    },
-    {
-        "id": "027cc512fcdc4a53",
-        "type": "orm-db",
-        "z": "e495c177d14d0b11",
-        "name": "",
-        "server": "a71510fea98254e9",
-        "queryType": "btransaction",
-        "model": "",
-        "rawQuery": "select * from user",
-        "where": [],
-        "attributes": [],
-        "limit": "false",
-        "limitType": "bool",
-        "offset": "false",
-        "offsetType": "bool",
-        "data": "false",
-        "dataType": "bool",
-        "order": [],
-        "outputs": 1,
-        "inputs": 1,
-        "syncType": "create",
-        "x": 420,
-        "y": 680,
-        "wires": [
-            [
-                "f376022617a1400d"
-            ]
-        ]
-    },
-    {
-        "id": "f376022617a1400d",
-        "type": "orm-db",
-        "z": "e495c177d14d0b11",
-        "name": "",
-        "server": "a71510fea98254e9",
-        "queryType": "update",
-        "model": "49c4af9594b609ec",
-        "rawQuery": "",
-        "where": [
+                "name": "username",
+                "type": "STRING",
+                "allowNull": false,
+                "primary": false,
+                "autoIncrement": false,
+                "size": ""
+            },
             {
-                "logic1": "none",
-                "field": "id",
-                "expression": "eq",
-                "value": "payload.id",
-                "logic2": "none",
-                "valueType": "msg"
+                "name": "password",
+                "type": "STRING",
+                "allowNull": false,
+                "primary": false,
+                "autoIncrement": false,
+                "size": ""
+            },
+            {
+                "name": "email",
+                "type": "STRING",
+                "allowNull": false,
+                "primary": false,
+                "autoIncrement": false,
+                "size": ""
             }
         ],
+        "relationship": [
+            {
+                "model": "role",
+                "association": "BelongsToMany",
+                "foreignKey": ""
+            }
+        ],
+        "x": 150,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "968e4a3301609a8e",
+        "type": "orm-db-model",
+        "z": "522bc7401194a938",
+        "g": "f01751929aa78bc7",
+        "name": "Role",
+        "server": "95346b16fb89f617",
+        "table": "role",
+        "fields": [
+            {
+                "name": "id",
+                "type": "INTEGER",
+                "allowNull": false,
+                "primary": true,
+                "autoIncrement": true,
+                "size": ""
+            },
+            {
+                "name": "name",
+                "type": "STRING",
+                "allowNull": false,
+                "primary": false,
+                "autoIncrement": false,
+                "size": ""
+            }
+        ],
+        "relationship": [
+            {
+                "model": "user",
+                "association": "BelongsToMany",
+                "foreignKey": ""
+            }
+        ],
+        "x": 290,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "138c89aeaf9de73a",
+        "type": "orm-db",
+        "z": "522bc7401194a938",
+        "name": "",
+        "server": "95346b16fb89f617",
+        "queryType": "sync",
+        "model": "e4ebf7dcb10d250f",
+        "rawQuery": "",
+        "where": [],
         "attributes": "id",
         "limit": "false",
         "limitType": "bool",
         "offset": "false",
         "offsetType": "bool",
-        "data": "payload",
-        "dataType": "msg",
-        "order": [],
-        "outputs": 2,
-        "inputs": 1,
-        "syncType": "create",
-        "x": 660,
-        "y": 680,
-        "wires": [
-            [
-                "c263d3eeaa49bdb1"
-            ],
-            [
-                "21e44b6389edfb88"
-            ]
-        ]
-    },
-    {
-        "id": "21e44b6389edfb88",
-        "type": "orm-db",
-        "z": "e495c177d14d0b11",
-        "name": "",
-        "server": "a71510fea98254e9",
-        "queryType": "rtransaction",
-        "model": "",
-        "rawQuery": "",
-        "where": [],
-        "attributes": [],
-        "limit": "false",
-        "limitType": "bool",
-        "offset": "false",
-        "offsetType": "bool",
-        "data": "false",
-        "dataType": "bool",
-        "order": [],
-        "outputs": 1,
-        "inputs": 1,
-        "syncType": "create",
-        "x": 880,
-        "y": 720,
-        "wires": [
-            [
-                "365f98582873489c"
-            ]
-        ]
-    },
-    {
-        "id": "c263d3eeaa49bdb1",
-        "type": "orm-db",
-        "z": "e495c177d14d0b11",
-        "name": "",
-        "server": "a71510fea98254e9",
-        "queryType": "ctransaction",
-        "model": "",
-        "rawQuery": "",
-        "where": [],
-        "attributes": [],
-        "limit": "false",
-        "limitType": "bool",
-        "offset": "false",
-        "offsetType": "bool",
-        "data": "false",
-        "dataType": "bool",
-        "order": [],
-        "outputs": 1,
-        "inputs": 1,
-        "syncType": "create",
-        "x": 880,
-        "y": 640,
-        "wires": [
-            [
-                "2988dedb39791bd9"
-            ]
-        ]
-    },
-    {
-        "id": "6a784bd9fbb56180",
-        "type": "orm-db",
-        "z": "e495c177d14d0b11",
-        "name": "Sync",
-        "server": "a71510fea98254e9",
-        "queryType": "sync",
-        "model": "",
-        "rawQuery": "",
-        "where": [],
-        "attributes": [],
-        "limit": "false",
-        "limitType": "bool",
-        "offset": "false",
-        "offsetType": "bool",
         "data": "false",
         "dataType": "bool",
         "order": [],
         "outputs": 2,
         "inputs": 1,
-        "syncType": "create",
-        "x": 390,
-        "y": 820,
+        "syncType": "force",
+        "include": "",
+        "x": 400,
+        "y": 240,
         "wires": [
             [
-                "71fe521d0dae76ed"
+                "a2ca39d923a410f1"
             ],
             [
-                "71fe521d0dae76ed"
+                "a2ca39d923a410f1"
             ]
         ]
     },
     {
-        "id": "d6bf513205097d59",
+        "id": "1d13c9ec2c450ce4",
         "type": "inject",
-        "z": "e495c177d14d0b11",
+        "z": "522bc7401194a938",
         "name": "",
         "props": [
             {
@@ -770,18 +174,18 @@
         "topic": "",
         "payload": "",
         "payloadType": "date",
-        "x": 140,
-        "y": 820,
+        "x": 160,
+        "y": 240,
         "wires": [
             [
-                "6a784bd9fbb56180"
+                "138c89aeaf9de73a"
             ]
         ]
     },
     {
-        "id": "71fe521d0dae76ed",
+        "id": "a2ca39d923a410f1",
         "type": "debug",
-        "z": "e495c177d14d0b11",
+        "z": "522bc7401194a938",
         "name": "debug 1",
         "active": true,
         "tosidebar": true,
@@ -790,59 +194,1516 @@
         "complete": "false",
         "statusVal": "",
         "statusType": "auto",
-        "x": 680,
-        "y": 820,
+        "x": 660,
+        "y": 240,
         "wires": []
     },
     {
-        "id": "a71510fea98254e9",
-        "type": "orm-db-connection",
-        "name": "Mysql-Test",
-        "driver": "mysql",
-        "host": "localhost",
-        "username": "root",
-        "password": "root",
-        "database": "node-red"
+        "id": "5e408f76b2eab362",
+        "type": "comment",
+        "z": "522bc7401194a938",
+        "g": "f01751929aa78bc7",
+        "name": "Models",
+        "info": "",
+        "x": 150,
+        "y": 80,
+        "wires": []
     },
     {
-        "id": "49c4af9594b609ec",
-        "type": "orm-db-model",
-        "name": "User",
-        "table": "user",
-        "fields": [
+        "id": "6103f0d8d52522db",
+        "type": "inject",
+        "z": "522bc7401194a938",
+        "name": "",
+        "props": [
             {
-                "name": "id",
-                "type": "INTEGER",
-                "allowNull": false,
-                "primary": true,
-                "autoIncrement": true,
-                "size": ""
-            },
-            {
-                "name": "username",
-                "type": "STRING",
-                "allowNull": false,
-                "primary": false,
-                "autoIncrement": false,
-                "size": "30"
-            },
-            {
-                "name": "email",
-                "type": "STRING",
-                "allowNull": false,
-                "primary": false,
-                "autoIncrement": false,
-                "size": ""
-            },
-            {
-                "name": "password",
-                "type": "STRING",
-                "allowNull": false,
-                "primary": false,
-                "autoIncrement": false,
-                "size": "50"
+                "p": "payload"
             }
         ],
-        "relationship": []
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "[{\"username\":\"user2\",\"email\":\"user2@mail.com\",\"password\":\"12345678\"},{\"username\":\"user3\",\"email\":\"user3@mail.com\",\"password\":\"12345678\"},{\"username\":\"user4\",\"email\":\"user4@mail.com\",\"password\":\"12345678\"}]",
+        "payloadType": "json",
+        "x": 150,
+        "y": 400,
+        "wires": [
+            [
+                "65c53bdb49aad5a1"
+            ]
+        ]
+    },
+    {
+        "id": "e25eae7d324c19ec",
+        "type": "comment",
+        "z": "522bc7401194a938",
+        "name": "Synchronize models in database",
+        "info": "",
+        "x": 210,
+        "y": 200,
+        "wires": []
+    },
+    {
+        "id": "65c53bdb49aad5a1",
+        "type": "orm-db",
+        "z": "522bc7401194a938",
+        "name": "",
+        "server": "95346b16fb89f617",
+        "queryType": "bulkCreate",
+        "model": "e4ebf7dcb10d250f",
+        "rawQuery": "",
+        "where": [],
+        "attributes": "id",
+        "limit": "false",
+        "limitType": "bool",
+        "offset": "false",
+        "offsetType": "bool",
+        "data": "payload",
+        "dataType": "msg",
+        "order": [],
+        "outputs": 2,
+        "inputs": 1,
+        "syncType": "create",
+        "include": "",
+        "x": 420,
+        "y": 400,
+        "wires": [
+            [
+                "9761d1b7c9385310"
+            ],
+            [
+                "9761d1b7c9385310"
+            ]
+        ]
+    },
+    {
+        "id": "9761d1b7c9385310",
+        "type": "debug",
+        "z": "522bc7401194a938",
+        "name": "debug 2",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 660,
+        "y": 400,
+        "wires": []
+    },
+    {
+        "id": "d65d5b1df84e3fe7",
+        "type": "comment",
+        "z": "522bc7401194a938",
+        "name": "Bulk Create",
+        "info": "",
+        "x": 150,
+        "y": 360,
+        "wires": []
+    },
+    {
+        "id": "00eb9de55d6fed58",
+        "type": "inject",
+        "z": "522bc7401194a938",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "1",
+        "payloadType": "num",
+        "x": 150,
+        "y": 480,
+        "wires": [
+            [
+                "f07972a3cb3c516b"
+            ]
+        ]
+    },
+    {
+        "id": "f07972a3cb3c516b",
+        "type": "orm-db",
+        "z": "522bc7401194a938",
+        "name": "",
+        "server": "95346b16fb89f617",
+        "queryType": "findOne",
+        "model": "e4ebf7dcb10d250f",
+        "rawQuery": "ffffff",
+        "where": [
+            {
+                "logic1": "none",
+                "field": "id",
+                "expression": "eq",
+                "value": "payload",
+                "logic2": "none",
+                "valueType": "msg"
+            }
+        ],
+        "attributes": "",
+        "limit": "payload",
+        "limitType": "msg",
+        "offset": "payload",
+        "offsetType": "msg",
+        "data": "payload",
+        "dataType": "msg",
+        "order": [],
+        "outputs": 2,
+        "inputs": 1,
+        "syncType": "alter",
+        "include": "",
+        "x": 410,
+        "y": 480,
+        "wires": [
+            [
+                "aebab562f7fdf4b3"
+            ],
+            [
+                "aebab562f7fdf4b3"
+            ]
+        ]
+    },
+    {
+        "id": "aebab562f7fdf4b3",
+        "type": "debug",
+        "z": "522bc7401194a938",
+        "name": "debug 3",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 660,
+        "y": 480,
+        "wires": []
+    },
+    {
+        "id": "f469edc9561f7c3f",
+        "type": "comment",
+        "z": "522bc7401194a938",
+        "name": "Find One User by Id",
+        "info": "",
+        "x": 170,
+        "y": 440,
+        "wires": []
+    },
+    {
+        "id": "2df2b84125095154",
+        "type": "inject",
+        "z": "522bc7401194a938",
+        "name": "",
+        "props": [],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "x": 150,
+        "y": 560,
+        "wires": [
+            [
+                "b85ded783106cd7c"
+            ]
+        ]
+    },
+    {
+        "id": "b85ded783106cd7c",
+        "type": "orm-db",
+        "z": "522bc7401194a938",
+        "name": "",
+        "server": "95346b16fb89f617",
+        "queryType": "findAll",
+        "model": "e4ebf7dcb10d250f",
+        "rawQuery": "",
+        "where": [],
+        "attributes": "id,username,password,email",
+        "limit": "false",
+        "limitType": "bool",
+        "offset": "false",
+        "offsetType": "bool",
+        "data": "false",
+        "dataType": "bool",
+        "order": [],
+        "outputs": 2,
+        "inputs": 1,
+        "syncType": "create",
+        "include": "role",
+        "x": 400,
+        "y": 560,
+        "wires": [
+            [
+                "c0c38f943291ee7f"
+            ],
+            [
+                "c0c38f943291ee7f"
+            ]
+        ]
+    },
+    {
+        "id": "c0c38f943291ee7f",
+        "type": "debug",
+        "z": "522bc7401194a938",
+        "name": "debug 4",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 660,
+        "y": 560,
+        "wires": []
+    },
+    {
+        "id": "b314337c5c402806",
+        "type": "comment",
+        "z": "522bc7401194a938",
+        "name": "Find All Users",
+        "info": "",
+        "x": 150,
+        "y": 520,
+        "wires": []
+    },
+    {
+        "id": "892652b223b8c49d",
+        "type": "inject",
+        "z": "522bc7401194a938",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "er1",
+        "payloadType": "str",
+        "x": 150,
+        "y": 640,
+        "wires": [
+            [
+                "0b7736b927244c3b"
+            ]
+        ]
+    },
+    {
+        "id": "0b7736b927244c3b",
+        "type": "orm-db",
+        "z": "522bc7401194a938",
+        "name": "",
+        "server": "95346b16fb89f617",
+        "queryType": "findAll",
+        "model": "e4ebf7dcb10d250f",
+        "rawQuery": "",
+        "where": [
+            {
+                "logic1": "none",
+                "field": "username",
+                "expression": "substring",
+                "value": "payload",
+                "logic2": "none",
+                "valueType": "msg"
+            },
+            {
+                "logic1": "or",
+                "field": "email",
+                "expression": "substring",
+                "value": "payload",
+                "logic2": "none",
+                "valueType": "msg"
+            }
+        ],
+        "attributes": "",
+        "limit": "false",
+        "limitType": "bool",
+        "offset": "false",
+        "offsetType": "bool",
+        "data": "false",
+        "dataType": "bool",
+        "order": [],
+        "outputs": 2,
+        "inputs": 1,
+        "syncType": "create",
+        "include": "",
+        "x": 400,
+        "y": 640,
+        "wires": [
+            [
+                "3f26c4bda9763758"
+            ],
+            [
+                "3f26c4bda9763758"
+            ]
+        ]
+    },
+    {
+        "id": "3f26c4bda9763758",
+        "type": "debug",
+        "z": "522bc7401194a938",
+        "name": "debug 5",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 660,
+        "y": 640,
+        "wires": []
+    },
+    {
+        "id": "3c7625f5b3d0d611",
+        "type": "comment",
+        "z": "522bc7401194a938",
+        "name": "Filter users by search term",
+        "info": "",
+        "x": 190,
+        "y": 600,
+        "wires": []
+    },
+    {
+        "id": "7b7a29d66da0d7a9",
+        "type": "inject",
+        "z": "522bc7401194a938",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"offset\":1,\"limit\":2}",
+        "payloadType": "json",
+        "x": 190,
+        "y": 720,
+        "wires": [
+            [
+                "7e1698d899c48371"
+            ]
+        ]
+    },
+    {
+        "id": "7e1698d899c48371",
+        "type": "orm-db",
+        "z": "522bc7401194a938",
+        "name": "",
+        "server": "95346b16fb89f617",
+        "queryType": "findAll",
+        "model": "e4ebf7dcb10d250f",
+        "rawQuery": "",
+        "where": [],
+        "attributes": "id,username,email",
+        "limit": "payload.limit",
+        "limitType": "msg",
+        "offset": "payload.offset",
+        "offsetType": "msg",
+        "data": "false",
+        "dataType": "bool",
+        "order": [],
+        "outputs": 2,
+        "inputs": 1,
+        "syncType": "create",
+        "include": "",
+        "x": 400,
+        "y": 720,
+        "wires": [
+            [
+                "1d2d7938691d08d0"
+            ],
+            [
+                "1d2d7938691d08d0"
+            ]
+        ]
+    },
+    {
+        "id": "1d2d7938691d08d0",
+        "type": "debug",
+        "z": "522bc7401194a938",
+        "name": "debug 6",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 660,
+        "y": 720,
+        "wires": []
+    },
+    {
+        "id": "d7cb35858e2063e8",
+        "type": "comment",
+        "z": "522bc7401194a938",
+        "name": "Filter with limits and offset",
+        "info": "",
+        "x": 190,
+        "y": 680,
+        "wires": []
+    },
+    {
+        "id": "5620bff41224b1a2",
+        "type": "inject",
+        "z": "522bc7401194a938",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"id\":1,\"username\":\"user1\",\"password\":\"Password*123\",\"email\":\"user1@mail.com\"}",
+        "payloadType": "json",
+        "x": 150,
+        "y": 960,
+        "wires": [
+            [
+                "25257e13b22ffc07"
+            ]
+        ]
+    },
+    {
+        "id": "25257e13b22ffc07",
+        "type": "orm-db",
+        "z": "522bc7401194a938",
+        "name": "",
+        "server": "95346b16fb89f617",
+        "queryType": "update",
+        "model": "e4ebf7dcb10d250f",
+        "rawQuery": "",
+        "where": [
+            {
+                "logic1": "none",
+                "field": "id",
+                "expression": "eq",
+                "value": "payload.id",
+                "logic2": "none",
+                "valueType": "msg"
+            }
+        ],
+        "attributes": "id,username,email",
+        "limit": "payload.limit",
+        "limitType": "msg",
+        "offset": "payload.offset",
+        "offsetType": "msg",
+        "data": "payload",
+        "dataType": "msg",
+        "order": [],
+        "outputs": 2,
+        "inputs": 1,
+        "syncType": "create",
+        "include": "",
+        "x": 400,
+        "y": 960,
+        "wires": [
+            [
+                "a61951c8e4aab598"
+            ],
+            [
+                "a61951c8e4aab598"
+            ]
+        ]
+    },
+    {
+        "id": "a61951c8e4aab598",
+        "type": "debug",
+        "z": "522bc7401194a938",
+        "name": "debug 7",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 660,
+        "y": 960,
+        "wires": []
+    },
+    {
+        "id": "3fc131049256e5f7",
+        "type": "comment",
+        "z": "522bc7401194a938",
+        "name": "Update user",
+        "info": "",
+        "x": 150,
+        "y": 920,
+        "wires": []
+    },
+    {
+        "id": "39ff126bb7470ea0",
+        "type": "inject",
+        "z": "522bc7401194a938",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"id\":4}",
+        "payloadType": "json",
+        "x": 150,
+        "y": 1040,
+        "wires": [
+            [
+                "27ecb58f9a18345d"
+            ]
+        ]
+    },
+    {
+        "id": "27ecb58f9a18345d",
+        "type": "orm-db",
+        "z": "522bc7401194a938",
+        "name": "",
+        "server": "95346b16fb89f617",
+        "queryType": "delete",
+        "model": "e4ebf7dcb10d250f",
+        "rawQuery": "",
+        "where": [
+            {
+                "logic1": "none",
+                "field": "id",
+                "expression": "eq",
+                "value": "payload.id",
+                "logic2": "none",
+                "valueType": "msg"
+            }
+        ],
+        "attributes": "id,username,email",
+        "limit": "payload.limit",
+        "limitType": "msg",
+        "offset": "payload.offset",
+        "offsetType": "msg",
+        "data": "payload",
+        "dataType": "msg",
+        "order": [],
+        "outputs": 2,
+        "inputs": 1,
+        "syncType": "create",
+        "x": 400,
+        "y": 1040,
+        "wires": [
+            [
+                "d494bce6efa21fa6"
+            ],
+            [
+                "d494bce6efa21fa6"
+            ]
+        ]
+    },
+    {
+        "id": "d494bce6efa21fa6",
+        "type": "debug",
+        "z": "522bc7401194a938",
+        "name": "debug 8",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 660,
+        "y": 1040,
+        "wires": []
+    },
+    {
+        "id": "17f6c3358f5138ef",
+        "type": "comment",
+        "z": "522bc7401194a938",
+        "name": "Delete user by id",
+        "info": "",
+        "x": 160,
+        "y": 1000,
+        "wires": []
+    },
+    {
+        "id": "ed73888bcfb58108",
+        "type": "inject",
+        "z": "522bc7401194a938",
+        "name": "",
+        "props": [],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "x": 150,
+        "y": 800,
+        "wires": [
+            [
+                "5a741a6186667fb8"
+            ]
+        ]
+    },
+    {
+        "id": "5a741a6186667fb8",
+        "type": "orm-db",
+        "z": "522bc7401194a938",
+        "name": "",
+        "server": "95346b16fb89f617",
+        "queryType": "findAll",
+        "model": "e4ebf7dcb10d250f",
+        "rawQuery": "",
+        "where": [],
+        "attributes": "id,username,email",
+        "limit": "false",
+        "limitType": "bool",
+        "offset": "false",
+        "offsetType": "bool",
+        "data": "false",
+        "dataType": "bool",
+        "order": [
+            [
+                "username",
+                "desc"
+            ]
+        ],
+        "outputs": 2,
+        "inputs": 1,
+        "syncType": "create",
+        "include": "",
+        "x": 400,
+        "y": 800,
+        "wires": [
+            [
+                "6508c8487c6f7154"
+            ],
+            [
+                "6508c8487c6f7154"
+            ]
+        ]
+    },
+    {
+        "id": "6508c8487c6f7154",
+        "type": "debug",
+        "z": "522bc7401194a938",
+        "name": "debug 9",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 660,
+        "y": 800,
+        "wires": []
+    },
+    {
+        "id": "b42c987d32f3781d",
+        "type": "comment",
+        "z": "522bc7401194a938",
+        "name": "Order by",
+        "info": "",
+        "x": 140,
+        "y": 760,
+        "wires": []
+    },
+    {
+        "id": "d7c2f501aeab7c13",
+        "type": "inject",
+        "z": "522bc7401194a938",
+        "name": "",
+        "props": [],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "x": 150,
+        "y": 1120,
+        "wires": [
+            [
+                "ffa4d6f799b21f0a"
+            ]
+        ]
+    },
+    {
+        "id": "ffa4d6f799b21f0a",
+        "type": "orm-db",
+        "z": "522bc7401194a938",
+        "name": "",
+        "server": "95346b16fb89f617",
+        "queryType": "sum",
+        "model": "e4ebf7dcb10d250f",
+        "rawQuery": "",
+        "where": [
+            {
+                "logic1": "none",
+                "field": "id",
+                "expression": "gte",
+                "value": "2",
+                "logic2": "none",
+                "valueType": "num"
+            }
+        ],
+        "attributes": "id",
+        "limit": "payload.limit",
+        "limitType": "msg",
+        "offset": "payload.offset",
+        "offsetType": "msg",
+        "data": "payload",
+        "dataType": "msg",
+        "order": [],
+        "outputs": 2,
+        "inputs": 1,
+        "syncType": "create",
+        "include": "",
+        "x": 400,
+        "y": 1120,
+        "wires": [
+            [
+                "be4401d7e48be153"
+            ],
+            [
+                "be4401d7e48be153"
+            ]
+        ]
+    },
+    {
+        "id": "be4401d7e48be153",
+        "type": "debug",
+        "z": "522bc7401194a938",
+        "name": "debug 10",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 660,
+        "y": 1120,
+        "wires": []
+    },
+    {
+        "id": "a3afc2d7f9cd7383",
+        "type": "comment",
+        "z": "522bc7401194a938",
+        "name": "Sum",
+        "info": "",
+        "x": 130,
+        "y": 1080,
+        "wires": []
+    },
+    {
+        "id": "b5b096a966d0c9ce",
+        "type": "inject",
+        "z": "522bc7401194a938",
+        "name": "",
+        "props": [],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "x": 150,
+        "y": 1200,
+        "wires": [
+            [
+                "65cafc3f372ae736"
+            ]
+        ]
+    },
+    {
+        "id": "65cafc3f372ae736",
+        "type": "orm-db",
+        "z": "522bc7401194a938",
+        "name": "",
+        "server": "95346b16fb89f617",
+        "queryType": "max",
+        "model": "e4ebf7dcb10d250f",
+        "rawQuery": "",
+        "where": [],
+        "attributes": "id",
+        "limit": "payload.limit",
+        "limitType": "msg",
+        "offset": "payload.offset",
+        "offsetType": "msg",
+        "data": "payload",
+        "dataType": "msg",
+        "order": [],
+        "outputs": 2,
+        "inputs": 1,
+        "syncType": "create",
+        "include": "",
+        "x": 400,
+        "y": 1200,
+        "wires": [
+            [
+                "0c5f481e1e0ac39b"
+            ],
+            [
+                "0c5f481e1e0ac39b"
+            ]
+        ]
+    },
+    {
+        "id": "0c5f481e1e0ac39b",
+        "type": "debug",
+        "z": "522bc7401194a938",
+        "name": "debug 11",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 660,
+        "y": 1200,
+        "wires": []
+    },
+    {
+        "id": "8cc7fa563d75380b",
+        "type": "comment",
+        "z": "522bc7401194a938",
+        "name": "Max",
+        "info": "",
+        "x": 130,
+        "y": 1160,
+        "wires": []
+    },
+    {
+        "id": "8c4424d486b6bdf1",
+        "type": "inject",
+        "z": "522bc7401194a938",
+        "name": "",
+        "props": [],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "x": 150,
+        "y": 1280,
+        "wires": [
+            [
+                "02dba9025e5d76e1"
+            ]
+        ]
+    },
+    {
+        "id": "02dba9025e5d76e1",
+        "type": "orm-db",
+        "z": "522bc7401194a938",
+        "name": "",
+        "server": "95346b16fb89f617",
+        "queryType": "min",
+        "model": "e4ebf7dcb10d250f",
+        "rawQuery": "",
+        "where": [],
+        "attributes": "id",
+        "limit": "payload.limit",
+        "limitType": "msg",
+        "offset": "payload.offset",
+        "offsetType": "msg",
+        "data": "payload",
+        "dataType": "msg",
+        "order": [],
+        "outputs": 2,
+        "inputs": 1,
+        "syncType": "create",
+        "include": "",
+        "x": 390,
+        "y": 1280,
+        "wires": [
+            [
+                "c4b81d992e93aa58"
+            ],
+            [
+                "c4b81d992e93aa58"
+            ]
+        ]
+    },
+    {
+        "id": "c4b81d992e93aa58",
+        "type": "debug",
+        "z": "522bc7401194a938",
+        "name": "debug 12",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 660,
+        "y": 1280,
+        "wires": []
+    },
+    {
+        "id": "d2de4ee37a93a458",
+        "type": "comment",
+        "z": "522bc7401194a938",
+        "name": "Min",
+        "info": "",
+        "x": 130,
+        "y": 1240,
+        "wires": []
+    },
+    {
+        "id": "a7381561dc7d7a50",
+        "type": "inject",
+        "z": "522bc7401194a938",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"id\":1,\"username\":\"user1\",\"password\":\"Password*1234\",\"email\":\"user1@mail.com\"}",
+        "payloadType": "json",
+        "x": 150,
+        "y": 1360,
+        "wires": [
+            [
+                "55d5b65fb815a679"
+            ]
+        ]
+    },
+    {
+        "id": "6672c40e952d9aa3",
+        "type": "orm-db",
+        "z": "522bc7401194a938",
+        "name": "",
+        "server": "95346b16fb89f617",
+        "queryType": "update",
+        "model": "e4ebf7dcb10d250f",
+        "rawQuery": "",
+        "where": [
+            {
+                "logic1": "none",
+                "field": "id",
+                "expression": "eq",
+                "value": "payload.id",
+                "logic2": "none",
+                "valueType": "msg"
+            }
+        ],
+        "attributes": "id,username,email",
+        "limit": "payload.limit",
+        "limitType": "msg",
+        "offset": "payload.offset",
+        "offsetType": "msg",
+        "data": "payload",
+        "dataType": "msg",
+        "order": [],
+        "outputs": 2,
+        "inputs": 1,
+        "syncType": "create",
+        "x": 680,
+        "y": 1360,
+        "wires": [
+            [
+                "cb9298736db1fab9"
+            ],
+            [
+                "853073b346ca2881"
+            ]
+        ]
+    },
+    {
+        "id": "97f1b9ee1ccb62c9",
+        "type": "debug",
+        "z": "522bc7401194a938",
+        "name": "debug 13",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1200,
+        "y": 1360,
+        "wires": []
+    },
+    {
+        "id": "a5edb45e0f0cce62",
+        "type": "comment",
+        "z": "522bc7401194a938",
+        "name": "Transaction",
+        "info": "",
+        "x": 150,
+        "y": 1320,
+        "wires": []
+    },
+    {
+        "id": "55d5b65fb815a679",
+        "type": "orm-db",
+        "z": "522bc7401194a938",
+        "name": "",
+        "server": "95346b16fb89f617",
+        "queryType": "btransaction",
+        "model": "e4ebf7dcb10d250f",
+        "rawQuery": "",
+        "where": [],
+        "attributes": "id",
+        "limit": "false",
+        "limitType": "bool",
+        "offset": "false",
+        "offsetType": "bool",
+        "data": "false",
+        "dataType": "bool",
+        "order": [],
+        "outputs": 1,
+        "inputs": 1,
+        "syncType": "create",
+        "x": 420,
+        "y": 1360,
+        "wires": [
+            [
+                "6672c40e952d9aa3"
+            ]
+        ]
+    },
+    {
+        "id": "cb9298736db1fab9",
+        "type": "orm-db",
+        "z": "522bc7401194a938",
+        "name": "",
+        "server": "95346b16fb89f617",
+        "queryType": "ctransaction",
+        "model": "e4ebf7dcb10d250f",
+        "rawQuery": "",
+        "where": [],
+        "attributes": "id",
+        "limit": "false",
+        "limitType": "bool",
+        "offset": "false",
+        "offsetType": "bool",
+        "data": "false",
+        "dataType": "bool",
+        "order": [],
+        "outputs": 1,
+        "inputs": 1,
+        "syncType": "create",
+        "x": 940,
+        "y": 1340,
+        "wires": [
+            [
+                "97f1b9ee1ccb62c9"
+            ]
+        ]
+    },
+    {
+        "id": "853073b346ca2881",
+        "type": "orm-db",
+        "z": "522bc7401194a938",
+        "name": "",
+        "server": "95346b16fb89f617",
+        "queryType": "rtransaction",
+        "model": "e4ebf7dcb10d250f",
+        "rawQuery": "",
+        "where": [],
+        "attributes": "id",
+        "limit": "false",
+        "limitType": "bool",
+        "offset": "false",
+        "offsetType": "bool",
+        "data": "false",
+        "dataType": "bool",
+        "order": [],
+        "outputs": 1,
+        "inputs": 1,
+        "syncType": "create",
+        "x": 940,
+        "y": 1380,
+        "wires": [
+            [
+                "97f1b9ee1ccb62c9"
+            ]
+        ]
+    },
+    {
+        "id": "1f77b60fdcbccbd0",
+        "type": "inject",
+        "z": "522bc7401194a938",
+        "name": "",
+        "props": [],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "x": 150,
+        "y": 880,
+        "wires": [
+            [
+                "b95a602c3774b834"
+            ]
+        ]
+    },
+    {
+        "id": "b95a602c3774b834",
+        "type": "orm-db",
+        "z": "522bc7401194a938",
+        "name": "",
+        "server": "95346b16fb89f617",
+        "queryType": "count",
+        "model": "e4ebf7dcb10d250f",
+        "rawQuery": "",
+        "where": [],
+        "attributes": "id,username,email",
+        "limit": "false",
+        "limitType": "bool",
+        "offset": "false",
+        "offsetType": "bool",
+        "data": "false",
+        "dataType": "bool",
+        "order": [
+            [
+                "username",
+                "desc"
+            ]
+        ],
+        "outputs": 2,
+        "inputs": 1,
+        "syncType": "create",
+        "include": "",
+        "x": 400,
+        "y": 880,
+        "wires": [
+            [
+                "5619c5bf2cd13b79"
+            ],
+            [
+                "5619c5bf2cd13b79"
+            ]
+        ]
+    },
+    {
+        "id": "5619c5bf2cd13b79",
+        "type": "debug",
+        "z": "522bc7401194a938",
+        "name": "debug 14",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 660,
+        "y": 880,
+        "wires": []
+    },
+    {
+        "id": "8c8a30cb69a83f3f",
+        "type": "comment",
+        "z": "522bc7401194a938",
+        "name": "Count",
+        "info": "",
+        "x": 130,
+        "y": 840,
+        "wires": []
+    },
+    {
+        "id": "3f99df64701a6086",
+        "type": "inject",
+        "z": "522bc7401194a938",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"id\":3}",
+        "payloadType": "json",
+        "x": 150,
+        "y": 1440,
+        "wires": [
+            [
+                "6a337339a75c92c1"
+            ]
+        ]
+    },
+    {
+        "id": "6a337339a75c92c1",
+        "type": "orm-db",
+        "z": "522bc7401194a938",
+        "name": "",
+        "server": "95346b16fb89f617",
+        "queryType": "raw",
+        "model": "e4ebf7dcb10d250f",
+        "rawQuery": "select * from user where id=:id;",
+        "where": [],
+        "attributes": "id",
+        "limit": "false",
+        "limitType": "bool",
+        "offset": "false",
+        "offsetType": "bool",
+        "data": "payload",
+        "dataType": "msg",
+        "order": [],
+        "outputs": 2,
+        "inputs": 1,
+        "syncType": "create",
+        "include": "",
+        "x": 390,
+        "y": 1440,
+        "wires": [
+            [
+                "0c7dbdd3042dfebd"
+            ],
+            [
+                "0c7dbdd3042dfebd"
+            ]
+        ]
+    },
+    {
+        "id": "0c7dbdd3042dfebd",
+        "type": "debug",
+        "z": "522bc7401194a938",
+        "name": "debug 15",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 660,
+        "y": 1440,
+        "wires": []
+    },
+    {
+        "id": "f3e7b8d916ed45db",
+        "type": "comment",
+        "z": "522bc7401194a938",
+        "name": "Raw query",
+        "info": "",
+        "x": 140,
+        "y": 1400,
+        "wires": []
+    },
+    {
+        "id": "7b4b5a49897163f0",
+        "type": "inject",
+        "z": "522bc7401194a938",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"username\":\"user1\",\"email\":\"user1@mail.com\",\"password\":\"12345678\",\"roles\":[{\"id\":1,\"name\":\"admin\"}]}",
+        "payloadType": "json",
+        "x": 150,
+        "y": 320,
+        "wires": [
+            [
+                "f6b8e9d6d475dffb"
+            ]
+        ]
+    },
+    {
+        "id": "f6b8e9d6d475dffb",
+        "type": "orm-db",
+        "z": "522bc7401194a938",
+        "name": "",
+        "server": "95346b16fb89f617",
+        "queryType": "add",
+        "model": "e4ebf7dcb10d250f",
+        "rawQuery": "",
+        "where": [],
+        "attributes": "id",
+        "limit": "false",
+        "limitType": "bool",
+        "offset": "false",
+        "offsetType": "bool",
+        "data": "payload",
+        "dataType": "msg",
+        "order": [],
+        "outputs": 2,
+        "inputs": 1,
+        "syncType": "create",
+        "include": "role",
+        "x": 390,
+        "y": 320,
+        "wires": [
+            [
+                "8123b1e2ae341c55"
+            ],
+            [
+                "8123b1e2ae341c55"
+            ]
+        ]
+    },
+    {
+        "id": "8123b1e2ae341c55",
+        "type": "debug",
+        "z": "522bc7401194a938",
+        "name": "debug 16",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 660,
+        "y": 320,
+        "wires": []
+    },
+    {
+        "id": "5a385c8ad715b19c",
+        "type": "comment",
+        "z": "522bc7401194a938",
+        "name": "Add user",
+        "info": "",
+        "x": 140,
+        "y": 280,
+        "wires": []
+    },
+    {
+        "id": "b5cddd431f08eefa",
+        "type": "orm-db",
+        "z": "522bc7401194a938",
+        "name": "",
+        "server": "95346b16fb89f617",
+        "queryType": "raw",
+        "model": "e4ebf7dcb10d250f",
+        "rawQuery": "select * from user",
+        "where": [],
+        "attributes": "id",
+        "limit": "false",
+        "limitType": "bool",
+        "offset": "false",
+        "offsetType": "bool",
+        "data": "false",
+        "dataType": "bool",
+        "order": [],
+        "outputs": 2,
+        "inputs": 1,
+        "syncType": "create",
+        "include": "",
+        "x": 390,
+        "y": 1520,
+        "wires": [
+            [
+                "2550c912a94b1c1a"
+            ],
+            [
+                "2550c912a94b1c1a"
+            ]
+        ]
+    },
+    {
+        "id": "274559292bfd8bb5",
+        "type": "inject",
+        "z": "522bc7401194a938",
+        "name": "",
+        "props": [
+            {
+                "p": "connection",
+                "v": "{\"driver\":\"sqlite\",\"host\":\"\",\"port\":\"\",\"username\":\"\",\"password\":\"\",\"database\":\"test.db\"}",
+                "vt": "json"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "x": 150,
+        "y": 1520,
+        "wires": [
+            [
+                "b5cddd431f08eefa"
+            ]
+        ]
+    },
+    {
+        "id": "2550c912a94b1c1a",
+        "type": "debug",
+        "z": "522bc7401194a938",
+        "name": "debug 17",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 660,
+        "y": 1520,
+        "wires": []
+    },
+    {
+        "id": "8b1c8f7fdbbac84c",
+        "type": "comment",
+        "z": "522bc7401194a938",
+        "name": "Dynamic connection",
+        "info": "",
+        "x": 170,
+        "y": 1480,
+        "wires": []
+    },
+    {
+        "id": "95346b16fb89f617",
+        "type": "orm-db-connection",
+        "name": "Sqlite",
+        "driver": "sqlite",
+        "host": "",
+        "username": "",
+        "password": "",
+        "database": "test.db"
     }
 ]

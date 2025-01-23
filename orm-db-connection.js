@@ -5,6 +5,7 @@ module.exports = function(RED) {
         this.name = config.name;
         this.driver = config.driver;
         this.host = config.host;
+        this.port = config.port;
         this.username = config.username;
         this.password = config.password;
         this.database = config.database;

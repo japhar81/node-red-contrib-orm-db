@@ -5,18 +5,15 @@
     </div>
     <div class="form-row">
         <label for="node-config-input-driver"><i class="fa fa-database"></i> Driver</label>
-        <select id="node-config-input-driver" placeholder="Select driver">
-            <option value="mysql">MySQL</option>
-            <option value="postgres">Postgres</option>
-            <option value="mssql">Sql Server</option>
-            <option value="mariadb">MariaDB</option>
-            <option value="sqlite">Sqlite</option>
-            <option value="oracle">Oracle</option>
-        </select>
+        <input type="text" id="node-config-input-driver" placeholder="Driver">
     </div>
     <div class="form-row" id="node-config-input-host-div">
         <label for="node-config-input-host"><i class="fa fa-server"></i> Host</label>
         <input type="text" id="node-config-input-host" placeholder="Host">
+    </div>
+    <div class="form-row" id="node-config-input-port-div">
+        <label for="node-config-input-port"><i class="fa fa-server"></i> Port</label>
+        <input type="text" id="node-config-input-port" placeholder="Port">
     </div>
     <div class="form-row" id="node-config-input-username-div">
         <label for="node-config-input-username"><i class="fa fa-user"></i> Username</label>
@@ -38,24 +35,10 @@
         defaults: {
             name: { value: '' },
             driver: { value: '', required: true },
-            host: { value: '', validate:function(v) {
-                const driver = $("#node-config-input-driver").val()
-                if(driver && driver != 'sqlite' && !v)
-                    return false
-                return true
-            }},
-            username: { value: '', validate:function(v) {
-                const driver = $("#node-config-input-driver").val()
-                if(driver && driver != 'sqlite' && !v)
-                    return false
-                return true
-            } },
-            password: { value: '', validate:function(v) {
-                const driver = $("#node-config-input-driver").val()
-                if(driver && driver != 'sqlite' && !v)
-                    return false
-                return true
-            } },
+            host: { value: '' },
+            port: { value: '' },
+            username: { value: '' },
+            password: { value: '' },
             database: { value: '', validate:function(v) {
                 const driver = $("#node-config-input-driver").val()
                 if(driver && driver != 'sqlite' && !v)
@@ -67,15 +50,32 @@
             return this.name || this.driver;
         },
         oneditprepare: function () {
+            $("#node-config-input-driver").typedInput({
+                types:[{
+                    value: 'sqlite',
+                    options: [
+                        { value: 'sqlite', label: 'Sqlite'},
+                        { value: 'mysql', label: 'MySql'},
+                        { value: 'mariadb', label: 'MariaDB'},
+                        { value: 'postgres', label: 'Postgres'},
+                        { value: 'mssql', label: 'Sql Server'},
+                        { value: 'db2', label: 'DB2'},
+                        { value: 'snowflake', label: 'Snow Flake'},
+                        { value: 'oracle', label: 'Oracle'},
+                    ]
+                }]
+            })
             $("#node-config-input-driver").on('change', function(event) {
                 const value = $("#node-config-input-driver").val()
                 if(!value) return
                 if(value == 'sqlite'){
                     $("#node-config-input-host-div").hide()
+                    $("#node-config-input-port-div").hide()
                     $("#node-config-input-username-div").hide()
                     $("#node-config-input-password-div").hide()
                 } else {
                     $("#node-config-input-host-div").show()
+                    $("#node-config-input-port-div").show()
                     $("#node-config-input-username-div").show()
                     $("#node-config-input-password-div").show()
                 }
@@ -85,4 +85,19 @@
 
         }
     });
+</script>
+<script type="text/markdown" data-help-name="orm-db-connection">
+This node allows you to configure access to databases.
+
+### Params
+* Driver: Select the database you will have access to
+* Host: The host of the relational database. This value is optional and defaults to "localhost"
+* Port: The port of the relational database. This value is optional and by default it takes the value of the selected driver port. For example, for MySql it would be 3306.
+* Username: The username which is used to authenticate against the database.This value is optional and defaults to "null"
+* Password: The password which is used to authenticate against the database.This value is optional and defaults to "null"
+* Database: The name of the database. In the case of selecting the sqlite driver you must add the path and the name of the file ('path/to/database.sqlite'), if you leave this field blank, it is assumed that it will be created in memory.
+
+### References
+
+- [Sequelize docs](https://sequelize.org/docs/v6/getting-started/)
 </script>

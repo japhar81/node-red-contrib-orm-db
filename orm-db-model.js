@@ -26,7 +26,7 @@ module.exports = function(RED) {
         var configNodes = [];
         RED.nodes.eachNode(function(node) {
             if (node.type === "orm-db-model") {
-                configNodes.push({id: node.id, name: node.name, table: node.table});
+                configNodes.push(node);
             }
         });
         res.json(configNodes);

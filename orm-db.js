@@ -3,7 +3,7 @@ const { Sequelize, Model, DataTypes, Op, HasOne } = require('sequelize');
 const { v4: uuid } = require('uuid');
 let sequelize = {}
 let transactions = {}
-
+const supportedDrivers = ['mysql','postgres','sqlite','mariadb','mssql','db2','snowflake','oracle']
 
 module.exports = function(RED) {
     RED.events.on('flows:started', function() {
@@ -47,14 +47,32 @@ module.exports = function(RED) {
         this.offset = config.offset
         this.order = config.order
         this.syncType = config.syncType
+        this.include = config.include;
         let node = this;
        
         
         node.on('input', async function(msg) {
             try {
-                const sequelizeKey = getKeyFromServer(node.server)
+                let server = null
+                if(msg.connection){
+                    if(!msg.connection.hasOwnProperty('driver'))
+                        throw new Error('Connection error, database driver not found.')
+                    if(!supportedDrivers.some(x=> x == msg.connection.driver))
+                        throw new Error(`Driver "${msg.connection.driver}" not supported by sequelize, the value of the driver must be one of the following: ${supportedDrivers.join(', ')}`)
+                    if(!msg.connection.hasOwnProperty('database') || (!msg.connection.database && msg.connection.driver != 'sqlite'))
+                        throw new Error('Connection error, database name not found.')
+                    server = msg.connection
+                }else if(node.server || (node.model && node.model.server)){
+                    server = node.server || node.model.server
+                } else {
+                    throw new Error('You must configure the database access server.')
+                }
+                const sequelizeKey = getKeyFromServer(server)
+                if(!sequelize[sequelizeKey])
+                    sequelize[sequelizeKey] = createSequelizeInstance(server)
                 const sequelizeInstance =  sequelize[sequelizeKey].instance         
                 const model = node.model ? sequelize[sequelizeKey].instance.models[node.model.table] : null
+                
                 switch (node.queryType) {
                     case 'findAll':{
                         let options = {}
@@ -72,6 +90,9 @@ module.exports = function(RED) {
                         }
                         if(node.order && node.order.length){
                             options.order = node.order
+                        }
+                        if(node.include){
+                            options.include = node.include.split(',').map(x=> sequelizeInstance.models[x])
                         }
                         msg.payload  = await model.findAll(options)
                     }break;
@@ -92,6 +113,9 @@ module.exports = function(RED) {
                         if(node.order && node.order.length){
                             options.order = node.order
                         }
+                        if(node.include){
+                            options.include = node.include.split(',').map(x=> sequelizeInstance.models[x])
+                        }
                         msg.payload = await model.findAndCountAll(options)
                     }break;
                     case 'add':{
@@ -100,10 +124,29 @@ module.exports = function(RED) {
                             data = node.dataType == 'json' ? RED.util.evaluateNodeProperty(this.data, 'json', this) : getValueByIndex(msg, this.data)                           
                         }
                         let options = {}
-                        if(msg.transaction && transactions[msg.transaction])
+                        if(msg.transaction && transactions[msg.transaction]) {
                             options.transaction = transactions[msg.transaction]
+                        }
+                        if(node.include){
+                            options.include = node.include.split(',').map(x=> sequelizeInstance.models[x])
+                        }
                         const result = await model.create(data, options)
                         msg.payload = !result ? result : result.toJSON()
+                    }break;
+                    case 'bulkCreate':{
+                        let data = {}
+                        if( node.dataType != 'bool' ){
+                            data = node.dataType == 'json' ? RED.util.evaluateNodeProperty(this.data, 'json', this) : getValueByIndex(msg, this.data)                           
+                        }
+                        let options = {}
+                        if(msg.transaction && transactions[msg.transaction]) {
+                            options.transaction = transactions[msg.transaction]
+                        }
+                        if(node.include){
+                            options.include = node.include.split(',').map(x=> sequelizeInstance.models[x])
+                        }
+                        const result = await model.bulkCreate(data, options)
+                        msg.payload = result
                     }break;
                     case 'update':{
                         let data = {}
@@ -136,6 +179,9 @@ module.exports = function(RED) {
                         }
                         if(node.attributes){
                             options.attributes = node.attributes.split(',')                            
+                        }
+                        if(node.include){
+                            options.include = node.include.split(',').map(x=> sequelizeInstance.models[x])
                         }
                         const result = await model.findOne(options)
                         msg.payload = !result ? result : result.toJSON()
@@ -235,6 +281,25 @@ module.exports = function(RED) {
 function getDatabaseNodes(RED) {
     let result = {}
     RED.nodes.eachNode(function(node){
+        if(node.type == 'orm-db-connection'){
+            const key = getKeyFromServer(node)
+            if(!result[key]){
+                result[key] = {
+                    key: key,
+                    server: {
+                        name: node.name,
+                        driver: node.driver,
+                        host: node.host,
+                        port: node.port,
+                        username: node.username,
+                        password: node.password,
+                        database: node.database
+                    },
+                    models: []
+                }
+            }
+            
+        }
         if(node.type == 'orm-db-model'){
             const server = RED.nodes.getNode(node.server)
             const key = getKeyFromServer(server)
@@ -245,12 +310,12 @@ function getDatabaseNodes(RED) {
                         name: server.name,
                         driver: server.driver,
                         host: server.host,
+                        port: server.port,
                         username: server.username,
                         password: server.password,
                         database: server.database
                     },
-                    models: [],
-                    node: node
+                    models: []
                 }
             }
             if(!result[key].models.some(x=> x.table == node.table)){
@@ -267,7 +332,9 @@ function getDatabaseNodes(RED) {
 }
 
 function getKeyFromServer(server){
-    return `${server.driver}-${server.host}-${server.database}`
+    if(server.driver == 'sqlite')
+        return `${server.driver}-${server.database || 'null'}`
+    else return `${server.driver}-${server.host || 'null'}-${server.port || 'null'}-${server.database || 'null'}`
 }
 
 
@@ -275,9 +342,10 @@ function createSequelizeInstance(server){
     return {
         instance: server.driver == 'sqlite' ? new Sequelize({
                 dialect: server.driver,
-                storage: server.database
-            }) : new Sequelize(server.database, server.username, server.password, {
-                host: server.host,
+                storage: server?.database
+            }) : new Sequelize(server?.database, server?.username, server?.password, {
+                host: server?.host,
+                port: server?.port,
                 dialect: server.driver
             }),
         definitionModel: {},
@@ -285,15 +353,6 @@ function createSequelizeInstance(server){
     }
 }
 
-function authenticate(key, node){
-    sequelize[key].instance.authenticate()
-        .then(x=>{
-            node.status({ fill: "green", shape: "ring", text: "Connected" });
-        })
-        .catch(e=>{
-            node.status({ fill: "red", shape: "ring", text: `Error` });
-        })
-}
 
 function createModelInstance(sequelizeInstance,model){
     const fields = model.fields
@@ -305,8 +364,10 @@ function createModelInstance(sequelizeInstance,model){
             type: type,
             primaryKey: curr.primary,
             allowNull: curr.allowNull,
-            autoIncrement: curr.autoIncrement
+            autoIncrement: curr.autoIncrement,
         }
+        if(curr.type == 'UUID')
+            acc[curr.name].defaultValue = DataTypes.UUIDV4
         return acc;
     },{})
     sequelizeInstance.define(model.table, definition, { 
@@ -323,7 +384,7 @@ function createRelationship() {
         for(let j in models){
             
             models[j].relationship.forEach(r=>{
-                let options = r.foreignKey ? { foreignKey: r.foreignKey} : {}
+                let options = r.foreignKey ? { foreignKey: r.foreignKey, timestamps: false} : {timestamps: false}
                 switch (r.association) {
                     case 'HasOne':{
                         sequelize[i].instance.models[j].hasOne(sequelize[i].instance.models[r.model], options)
