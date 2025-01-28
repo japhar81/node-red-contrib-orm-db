@@ -300,7 +300,7 @@ function getDatabaseNodes(RED) {
             }
             
         }
-        if(node.type == 'orm-db-model'){
+        if(node.type == 'orm-db-model'  && node.server ){
             const server = RED.nodes.getNode(node.server)
             const key = getKeyFromServer(server)
             if(!result[key]){
