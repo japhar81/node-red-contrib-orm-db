@@ -35,10 +35,12 @@ module.exports = function(RED) {
     function createSequelizeInstance(server){
         return server.driver == 'sqlite' ? new Sequelize({
                     dialect: server.driver,
-                    storage: server.database
+                    storage: server.database,
+                    dialectOptions: server.dialectOptions ? JSON.parse(server.dialectOptions) : {}
                 }) : new Sequelize(server.database, server.username, server.password, {
                     host: server.host,
-                    dialect: server.driver
+                    dialect: server.driver,
+                    dialectOptions: server.dialectOptions ? JSON.parse(server.dialectOptions) : {}
                 })
     }
     

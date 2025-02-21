@@ -46,10 +46,6 @@
         <label><i class="fa fa-sort-alpha-asc"></i> Order</label>
         <ol id="node-input-order"></ol>
     </div>
-    <div class="form-row">
-        <input type="hidden" id="node-input-outputs"/>
-        <input type="hidden" id="node-input-inputs"/>
-    </div>
     <div class="form-row" id="node-input-syncType-div">
         <label style="width: 100%;"><i class="fa fa-wrench"></i> Synchronization Type</label>
         <input style="width: 100%;" type="text" id="node-input-syncType">
@@ -100,7 +96,6 @@
         $("#node-input-limit-div").hide()      
         $("#node-input-offset-div").hide()      
         $("#node-input-order-div").hide()
-        $("#node-input-outputs").val(JSON.stringify({0:0, 1:1}))
         $('#node-input-syncType-div').hide()
         $('#node-input-include-div').hide()
     }
@@ -321,14 +316,12 @@
             }},
             dataType: { value: 'bool' },
             order: { value: []},
-            outputs: { value: 2},
-            inputs: { value: 1},
             syncType: { value: 'create'},
             include: { value: [] },
         },
         inputs: 1,
-        outputs: 2,
-        outputLabels: ['success', 'error'],
+        outputs: 1,
+        outputLabels: ['stdout'],
         icon: "font-awesome/fa-database",
         label: function() {
             return this.name ? `${this.name} (${this.queryType})`: `orm-db ${ this.queryType ? `(${this.queryType})`: '' }`;
@@ -473,15 +466,12 @@
                     }break;
                     case 'btransaction':{
                         $("#node-input-server-div").show()
-                        $("#node-input-outputs").val(JSON.stringify({0:0}))
                     }break;
                     case 'ctransaction':{
                         $("#node-input-server-div").show()
-                        $("#node-input-outputs").val(JSON.stringify({0:0}))
                     }break;
                     case 'rtransaction':{
                         $("#node-input-server-div").show()
-                        $("#node-input-outputs").val(JSON.stringify({0:0}))
                     }break;
                     case 'sync':{
                         $("#node-input-server-div").show()

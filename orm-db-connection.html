@@ -4,7 +4,7 @@
         <input type="text" id="node-config-input-name" placeholder="Name">
     </div>
     <div class="form-row">
-        <label for="node-config-input-driver"><i class="fa fa-database"></i> Driver</label>
+        <label for="node-config-input-driver"><i class="fa fa-code-fork"></i> Driver</label>
         <input type="text" id="node-config-input-driver" placeholder="Driver">
     </div>
     <div class="form-row" id="node-config-input-host-div">
@@ -12,7 +12,7 @@
         <input type="text" id="node-config-input-host" placeholder="Host">
     </div>
     <div class="form-row" id="node-config-input-port-div">
-        <label for="node-config-input-port"><i class="fa fa-server"></i> Port</label>
+        <label for="node-config-input-port"><i class="fa fa-circle-o-notch"></i> Port</label>
         <input type="text" id="node-config-input-port" placeholder="Port">
     </div>
     <div class="form-row" id="node-config-input-username-div">
@@ -26,6 +26,11 @@
     <div class="form-row">
         <label for="node-config-input-database"><i class="fa fa-database"></i> Database</label>
         <input type="text" id="node-config-input-database" placeholder="Database name or path (Sqlite driver)">
+    </div>
+    <div class="form-row">
+        <label for="node-config-input-database"><i class="fa fa-file-code-o"></i> Dialect Options</label>
+        <input type="text" id="node-config-input-dialectOptions" placeholder="Dialect options">
+        <input type="hidden" id="node-config-input-dialectOptionsType">
     </div>
 </script>
 <script type="text/javascript">
@@ -44,7 +49,19 @@
                 if(driver && driver != 'sqlite' && !v)
                     return false
                 return true
-            } }
+            } },
+            dialectOptions: { value: '', validate:function(v) {
+                if(!v)
+                    return true
+                try {
+                    JSON.parse(v)
+                    return true
+                } catch{
+                    return false
+                }
+                
+            } },
+            dialectOptionsType: { value: 'json' }
         },
         label: function() {
             return this.name || this.driver;
@@ -80,9 +97,12 @@
                     $("#node-config-input-password-div").show()
                 }
             } );
-        },
-        oneditsave: function() {
 
+            $("#node-config-input-dialectOptions").css('width','75%').typedInput({
+                type: 'json',
+                types:['json'],
+                typeField: "#node-config-input-dialectOptionsType"
+            })
         }
     });
 </script>
@@ -96,6 +116,7 @@ This node allows you to configure access to databases.
 * Username: The username which is used to authenticate against the database.This value is optional and defaults to "null"
 * Password: The password which is used to authenticate against the database.This value is optional and defaults to "null"
 * Database: The name of the database. In the case of selecting the sqlite driver you must add the path and the name of the file ('path/to/database.sqlite'), if you leave this field blank, it is assumed that it will be created in memory.
+* Dialect Options: You can configure the specific settings for each driver individually. For more details, check the [documentation](https://sequelize.org/docs/v6/other-topics/dialect-specific-things/).
 
 ### References
 

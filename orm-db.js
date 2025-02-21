@@ -265,14 +265,10 @@ module.exports = function(RED) {
                         }
                     }break;
                 }
-                node.send([msg, null]);
+                node.send(msg);
             } catch (error) {
-                node.error(error);
-                node.send([null, msg]);
+                node.error(error, msg);
             }
-            
-            
-            
         });
     }
     RED.nodes.registerType("orm-db",OrmDb);
@@ -293,7 +289,8 @@ function getDatabaseNodes(RED) {
                         port: node.port,
                         username: node.username,
                         password: node.password,
-                        database: node.database
+                        database: node.database,
+                        dialectOptions: node.dialectOptions
                     },
                     models: []
                 }
@@ -313,7 +310,8 @@ function getDatabaseNodes(RED) {
                         port: server.port,
                         username: server.username,
                         password: server.password,
-                        database: server.database
+                        database: server.database,
+                        dialectOptions: node.dialectOptions
                     },
                     models: []
                 }
@@ -342,11 +340,13 @@ function createSequelizeInstance(server){
     return {
         instance: server.driver == 'sqlite' ? new Sequelize({
                 dialect: server.driver,
-                storage: server?.database
+                storage: server?.database,
+                dialectOptions: server.dialectOptions ? JSON.parse(server.dialectOptions) : {}
             }) : new Sequelize(server?.database, server?.username, server?.password, {
                 host: server?.host,
                 port: server?.port,
-                dialect: server.driver
+                dialect: server.driver,
+                dialectOptions: server.dialectOptions ? JSON.parse(server.dialectOptions) : {}
             }),
         definitionModel: {},
         server: server

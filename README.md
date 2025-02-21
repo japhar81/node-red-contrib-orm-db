@@ -37,9 +37,6 @@ $ npm install --save oracledb # Oracle Database
 1. Standard output
 : payload (object) : the standard output of the operation.
 
-2. Standard error
-: payload (string) : the standard error of the operation.
-
 ### Details
 
 The first step to using the node is to create the database connections and the models (database tables) to be used, 
