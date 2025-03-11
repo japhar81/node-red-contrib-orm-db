@@ -48,9 +48,8 @@ module.exports = function(RED) {
         this.order = config.order
         this.syncType = config.syncType
         this.include = config.include;
-        let node = this;
-       
-        
+        let node = this;        
+
         node.on('input', async function(msg) {
             try {
                 let server = null
@@ -62,8 +61,15 @@ module.exports = function(RED) {
                     if(!msg.connection.hasOwnProperty('database') || (!msg.connection.database && msg.connection.driver != 'sqlite'))
                         throw new Error('Connection error, database name not found.')
                     server = msg.connection
-                }else if(node.server || (node.model && node.model.server)){
-                    server = node.server || node.model.server
+                } else if(['raw','sync','btransaction','ctransaction','rtransaction'].some(x=> x == node.queryType) && node.server){
+                    server = node.server
+                } else if(['findAll','findOne','findAndCountAll','add','bulkCreate','update','delete','count','sum','min','max'].some(x=> x == node.queryType) && (config.model && !node.model)) {
+                    node.model = RED.nodes.getNode(config.model)
+                    if(!node.model)
+                        throw new Error('You must update the model of this node as it maintains a reference to a previous model.')
+                    server = node.model.server
+                } else if(['findAll','findOne','findAndCountAll','add','bulkCreate','update','delete','count','sum','min','max'].some(x=> x == node.queryType) && node.model && node.model.server) {
+                    server = node.model.server
                 } else {
                     throw new Error('You must configure the database access server.')
                 }
@@ -258,15 +264,16 @@ module.exports = function(RED) {
                             node.status({ fill: 'yellow', shape: 'ring', text: 'Synchronizing' });
                             await sequelizeInstance.sync(options)
                             node.status({ fill: 'green', shape: 'ring', text: 'Success' });
+                            msg.payload = true
                         } catch (error) {
                             node.status({ fill: 'red', shape: 'ring', text: 'Error' });
                             throw error;
-                            
                         }
                     }break;
                 }
                 node.send(msg);
             } catch (error) {
+                msg.payload = error
                 node.error(error, msg);
             }
         });

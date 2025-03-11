@@ -1,6 +1,6 @@
 {
   "name": "node-red-contrib-orm-db",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "ORM for Oracle, Postgres, MySQL, MariaDB, SQLite and SQL Server, and more",
   "main": "index.js",
   "scripts": {
@@ -40,8 +40,6 @@
     "url": "git+https://github.com/asielh1n1/node-red-contrib-orm-db.git"
   },
   "dependencies": {
-    "pg": "^8.13.3",
-    "pg-hstore": "^2.3.4",
     "sequelize": "^6.37.5",
     "sqlite3": "^5.1.7"
   }
