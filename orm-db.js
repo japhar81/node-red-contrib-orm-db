@@ -392,6 +392,13 @@ function createRelationship() {
             
             models[j].relationship.forEach(r=>{
                 let options = r.foreignKey ? { foreignKey: r.foreignKey, timestamps: false} : {timestamps: false}
+                if (r.targetKey) {
+                    options.targetKey = r.targetKey;
+                }
+                if (r.sourceKey) {
+                    options.sourceKey = r.sourceKey;
+                }
+
                 switch (r.association) {
                     case 'HasOne':{
                         sequelize[i].instance.models[j].hasOne(sequelize[i].instance.models[r.model], options)
@@ -408,7 +415,6 @@ function createRelationship() {
                                 acc.push(curr)
                             return acc
                         }, [])
-                        
                         options.through = tableName.join('_')
                         sequelize[i].instance.models[j].belongsToMany(sequelize[i].instance.models[r.model], options)
                     }break;

@@ -93,9 +93,11 @@
             "align-items":"center"
         });
         let inputRows = $('<div></div>',{style:"flex-grow:1"}).appendTo(container);
-        let column1 = $('<div></div>',{style:"display: inline-block;width:25%;"}).appendTo(inputRows);
-        let column2 = $('<div/>',{style:"display: inline-block;width:35%;padding-left:15px"}).appendTo(inputRows);
-        let column3 = $('<div/>',{style:"display: inline-block;width:35%;padding-left:15px"}).appendTo(inputRows);
+        let column1 = $('<div></div>',{style:"display: inline-block;width:20%;"}).appendTo(inputRows);
+        let column2 = $('<div/>',{style:"display: inline-block;width:20%;padding-left:5px"}).appendTo(inputRows);
+        let column3 = $('<div/>',{style:"display: inline-block;width:20%;padding-left:5px"}).appendTo(inputRows);
+        let column4 = $('<div/>',{style:"display: inline-block;width:20%;padding-left:5px"}).appendTo(inputRows);
+        let column5 = $('<div/>',{style:"display: inline-block;width:17%;padding-left:5px"}).appendTo(inputRows);
         
         let selectAssociation = $('<select/>',{class:"node-input-association-value",style:"width:100%; text-align: center;"}).appendTo(column1);
         selectAssociation.append($("<option></option>").val('HasOne').text('HasOne'));
@@ -107,7 +109,7 @@
 
         let selectModel = $('<select/>',{class:"node-input-model-value", style:"width:100%; text-align: center;"}).appendTo(column2);
         configModels.forEach(item=>{
-            selectModel.append($("<option></option>").val(item.table).text(item.name));
+            selectModel.append($("<option></option>").val(item.table).text(item.name || item.table));
         })
         if(data.model)
             selectModel.val(data.model);
@@ -115,6 +117,15 @@
         let inputForeignKey = $('<input type="text" class="node-input-foreignkey-value" style="width:100%;"/>').appendTo(column3);
         if(data.foreignKey)
             inputForeignKey.val(data.foreignKey);
+
+        let inputSourceKey = $('<input type="text" class="node-input-sourceKey-value" style="width:100%;"/>').appendTo(column4);
+        if(data.sourceKey)
+            inputSourceKey.val(data.sourceKey);
+        
+        let inputTargetKey = $('<input type="text" class="node-input-targetKey-value" style="width:100%;"/>').appendTo(column5);
+        if(data.targetKey)
+            inputTargetKey.val(data.targetKey);
+
     }
 
     function getRelationships() {   
@@ -125,7 +136,9 @@
                 const model = $(this).find(".node-input-model-value").val()
                 const association = $(this).find(".node-input-association-value").val()
                 const foreignKey = $(this).find(".node-input-foreignkey-value").val()
-                relationships.push({model, association, foreignKey})
+                const sourceKey = $(this).find(".node-input-sourceKey-value").val()
+                const targetKey = $(this).find(".node-input-targetKey-value").val()
+                relationships.push({model, association, foreignKey, sourceKey, targetKey})
             });
         } catch{}        
         return relationships 
@@ -170,7 +183,7 @@
 
             $("#node-input-relationship").css('min-height','160px').editableList({
                 removable: true,
-                header: $('<div style="display:flex"></div>').append($.parseHTML("<div style='width:25%;display: inline; padding-left:15px'>Association</div><div style='width:35%;display: inline;'>Model</div><div style='width:35%;display: inline;'>Foreign Key</div>")),
+                header: $('<div style="display:flex"></div>').append($.parseHTML("<div style='width:20%;display: inline; padding-left:5px'>Association</div><div style='width:20%;display: inline;'>Model</div><div style='width:20%;display: inline;'>Foreign Key</div><div style='width:20%;display: inline;'>Source Key</div><div style='width:15%;display: inline;'>Target Key</div>")),
                 addItem: function(container, index, data) {
                     insertRowRelationship(container, data, configModels)
                 }
