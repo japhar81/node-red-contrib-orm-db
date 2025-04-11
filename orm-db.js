@@ -297,7 +297,8 @@ function getDatabaseNodes(RED) {
                         username: node.username,
                         password: node.password,
                         database: node.database,
-                        dialectOptions: node.dialectOptions
+                        dialectOptions: node.dialectOptions,
+                        logging: node.logging
                     },
                     models: []
                 }
@@ -318,7 +319,8 @@ function getDatabaseNodes(RED) {
                         username: server.username,
                         password: server.password,
                         database: server.database,
-                        dialectOptions: node.dialectOptions
+                        dialectOptions: node.dialectOptions,
+                        logging: node.logging
                     },
                     models: []
                 }
@@ -344,16 +346,19 @@ function getKeyFromServer(server){
 
 
 function createSequelizeInstance(server){
+    let logging = server.logging == 'enabled' ? console.log : false
     return {
         instance: server.driver == 'sqlite' ? new Sequelize({
                 dialect: server.driver,
                 storage: server?.database,
-                dialectOptions: server.dialectOptions ? JSON.parse(server.dialectOptions) : {}
+                dialectOptions: server.dialectOptions ? JSON.parse(server.dialectOptions) : {},
+                logging
             }) : new Sequelize(server?.database, server?.username, server?.password, {
                 host: server?.host,
                 port: server?.port,
                 dialect: server.driver,
-                dialectOptions: server.dialectOptions ? JSON.parse(server.dialectOptions) : {}
+                dialectOptions: server.dialectOptions ? JSON.parse(server.dialectOptions) : {},
+                logging
             }),
         definitionModel: {},
         server: server
@@ -472,7 +477,10 @@ function convertToSequelizeWhere(conditions, msg) {
     const logicExpressions = ['(', ')', 'or', 'and']
     conditions.forEach(cond => {
         const { logic1, field, expression, value, logic2, valueType } = cond;
-        const conditionObject = { [field]: { [Op[expression]]: getValueFromInputType(valueType, value, msg) } };
+        let conditionObject = {}
+        if(expression == 'is')
+            conditionObject = { [field]: { [Op[expression]]: null } };
+        else conditionObject = { [field]: { [Op[expression]]: getValueFromInputType(valueType, value, msg) } };
         if(logicExpressions.some(x=> x == logic1))
             expressionResult.push(logic1)
         expressionResult.push(conditionObject)

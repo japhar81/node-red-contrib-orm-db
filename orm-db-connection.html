@@ -32,6 +32,10 @@
         <input type="text" id="node-config-input-dialectOptions" placeholder="Dialect options">
         <input type="hidden" id="node-config-input-dialectOptionsType">
     </div>
+    <div class="form-row">
+        <label><i class="fa fa-terminal"></i> Logging</label>
+        <input type="text" id="node-config-input-logging" placeholder="Logging">
+    </div>
 </script>
 <script type="text/javascript">
     RED.nodes.registerType('orm-db-connection',{
@@ -61,7 +65,8 @@
                 }
                 
             } },
-            dialectOptionsType: { value: 'json' }
+            dialectOptionsType: { value: 'json' },
+            logging: { value: 'enabled' }
         },
         label: function() {
             return this.name || this.driver;
@@ -103,6 +108,16 @@
                 types:['json'],
                 typeField: "#node-config-input-dialectOptionsType"
             })
+
+            $("#node-config-input-logging").typedInput({
+                types:[{
+                    value: 'enabled',
+                    options: [
+                        { value: 'enabled', label: 'Enabled'},
+                        { value: 'disabled', label: 'Disabled'}
+                    ]
+                }]
+            })
         }
     });
 </script>
@@ -117,6 +132,7 @@ This node allows you to configure access to databases.
 * Password: The password which is used to authenticate against the database.This value is optional and defaults to "null"
 * Database: The name of the database. In the case of selecting the sqlite driver you must add the path and the name of the file ('path/to/database.sqlite'), if you leave this field blank, it is assumed that it will be created in memory.
 * Dialect Options: You can configure the specific settings for each driver individually. For more details, check the [documentation](https://sequelize.org/docs/v6/other-topics/dialect-specific-things/).
+* Logging: Enable or disable logs in the terminal.
 
 ### References
 

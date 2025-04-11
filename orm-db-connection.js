@@ -11,6 +11,7 @@ module.exports = function(RED) {
         this.database = config.database;
         this.dialectOptions = config.dialectOptions
         this.dialectOptionsType = config.dialectOptionsType
+        this.logging = config.logging
     }
     RED.nodes.registerType("orm-db-connection",Connection);
 }
