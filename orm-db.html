@@ -54,6 +54,7 @@
         <label style="width: 100px;display: inline-block;"><i class="fa fa-circle-o-notch"></i> Include</label>
         <input type="text" id="node-input-include"/>
     </div>
+    <datalist id="fields"></datalist>
 </script>
 <script type="text/javascript">
     
@@ -65,8 +66,8 @@
         {v:"gt",t:">"},
         {v:"gte",t:">="},
         {v:"substring",t:"contains"},
-        {v:"is",t:"is null"},
-        {v:"not",t:"is not true"},
+        {v:"is",t:"is"},
+        {v:"not",t:"is not"},
         {v:"between",t:"between"},
         {v:"notBetween",t:"not between"},
         {v:"in",t:"in"},
@@ -105,7 +106,17 @@
         if(modelSelected == 'none')
             return []
         const modelValues = RED.nodes.node(modelSelected)
-        return modelValues ? modelValues.fields : []
+        const fields = modelValues ? modelValues.fields : []
+        updateDatalist(fields)
+        return fields
+    }
+
+    function updateDatalist(fieldList) {
+        const $datalist = $('#fields');        
+        $datalist.empty();
+        fieldList.forEach(item => {
+            $datalist.append(`<option value="${item.name}"></option>`);
+        });
     }
 
     function insertRowWhere(container, data, index){
@@ -130,11 +141,8 @@
         if(data.logic1)
             selectLogicOperator1.val(data.logic1);
         
-        let selectField = $('<select/>',{class:"node-input-field-value", style:"width:100%; text-align: center;"}).appendTo(column2);
-        const modelFields = getModelFields()
-        modelFields.forEach(item=>{
-            selectField.append($("<option></option>").val(item.name).text(item.name));
-        })
+        let selectField = $('<input/>',{list: "fields", class:"node-input-field-value red-ui-typedInput-container red-ui-typedInput-input placeholder-input", style:"width:100%!important; text-align: center;border: solid 1px #ccc"}).appendTo(column2);
+        
         if(data.field)
             selectField.val(data.field);
         let selectExpression = $('<select/>',{class:"node-input-expression-value",style:"width:100%; text-align: center;"}).appendTo(column3);
@@ -728,7 +736,7 @@ the first is used to indicate that the synchronization was successful, and the s
 * **Name**: Node name, the node type is also added
 * **Model**: Allows you to select the model on which the operations are performed.
 * **Type**: Type of operation to be performed, check the "Operation Types" header.
-* **Where**: It allows you to add filtering to operations such as search, delete, update, and count. It is important to pay close attention to the parentheses and the "and" and "or" operations.
+* **Where**: It allows you to add filtering to operations such as search, delete, update, and count. It is important to pay close attention to the parentheses and the "and" and "or" operations. If a value of type 'null' needed to be added in the expression, the data type 'string' should be selected, and the value 'null' should be entered.
 * **Attributes**: You can select for some operations the attributes you want to return in the query.
 * **Limit**: You can set limits on the number of items that the query will return. This value can be set either statically (with a number) or dynamically as part of the input message (msg.limit). Very useful for doing server-side pagination.
 * **Offset**: You can set from which position in the response list the data will be returned. It is possible to set this value either statically (with a number) or dynamically as part of the input message (msg.limit). Very useful for doing server-side pagination.

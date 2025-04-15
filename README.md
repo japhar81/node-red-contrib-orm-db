@@ -76,7 +76,7 @@ the first is used to indicate that the synchronization was successful, and the s
 * **Name**: Node name, the node type is also added
 * **Model**: Allows you to select the model on which the operations are performed.
 * **Type**: Type of operation to be performed, check the "Operation Types" header.
-* **Where**: It allows you to add filtering to operations such as search, delete, update, and count. It is important to pay close attention to the parentheses and the "and" and "or" operations.
+* **Where**: It allows you to add filtering to operations such as search, delete, update, and count. It is important to pay close attention to the parentheses and the "and" and "or" operations. If a value of type 'null' needed to be added in the expression, the data type 'string' should be selected, and the value 'null' should be entered.
 * **Attributes**: You can select for some operations the attributes you want to return in the query.
 * **Limit**: You can set limits on the number of items that the query will return. This value can be set either statically (with a number) or dynamically as part of the input message (msg.limit). Very useful for doing server-side pagination.
 * **Offset**: You can set from which position in the response list the data will be returned. It is possible to set this value either statically (with a number) or dynamically as part of the input message (msg.limit). Very useful for doing server-side pagination.

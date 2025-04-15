@@ -478,9 +478,7 @@ function convertToSequelizeWhere(conditions, msg) {
     conditions.forEach(cond => {
         const { logic1, field, expression, value, logic2, valueType } = cond;
         let conditionObject = {}
-        if(expression == 'is')
-            conditionObject = { [field]: { [Op[expression]]: null } };
-        else conditionObject = { [field]: { [Op[expression]]: getValueFromInputType(valueType, value, msg) } };
+        conditionObject = { [field]: { [Op[expression]]: getValueFromInputType(valueType, value, msg) } };
         if(logicExpressions.some(x=> x == logic1))
             expressionResult.push(logic1)
         expressionResult.push(conditionObject)
@@ -510,6 +508,8 @@ function convertToSequelizeWhere(conditions, msg) {
 function getValueFromInputType(valueType, value, msg){
     switch (valueType) {
         case 'str':{
+            if(value == 'null')
+                return null
             return value
         }break;
         case 'num':{
@@ -525,7 +525,7 @@ function getValueFromInputType(valueType, value, msg){
             return  new Date(value)
         }break;
         case 'bool':{
-            return  Boolean.parse(value)
+            return  value.toLowerCase() === "true"
         }break;
         default:
             return value
