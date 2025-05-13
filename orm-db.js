@@ -121,6 +121,8 @@ module.exports = function(RED) {
                         }
                         if(node.include){
                             options.include = node.include.split(',').map(x=> sequelizeInstance.models[x])
+                            if(options.include.length)
+                                options.distinct = true
                         }
                         msg.payload = await model.findAndCountAll(options)
                     }break;

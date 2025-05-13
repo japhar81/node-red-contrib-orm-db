@@ -101,7 +101,6 @@ It is possible to establish dynamic connections to different databases at runtim
 ### Examples
 
 Review the node examples for more clarity on how to use it. You can import it in the import menu and search for the node example "node-red-contrib-orm-db" or the json for the site [GitHub](https://github.com/asielh1n1/node-red-contrib-orm-db/blob/main/examples/example.json).
-If you run them in the order they appear it should work without problems.
 
 ### References
 
