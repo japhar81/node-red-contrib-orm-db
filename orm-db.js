@@ -392,7 +392,7 @@ function createModelInstance(sequelizeInstance,model){
 
 
 function createRelationship() {
-    
+    let belongsToManyRelation = {}
     for(let i in sequelize){
         let models = sequelize[i].definitionModel
         for(let j in models){
@@ -405,7 +405,6 @@ function createRelationship() {
                 if (r.sourceKey) {
                     options.sourceKey = r.sourceKey;
                 }
-
                 switch (r.association) {
                     case 'HasOne':{
                         sequelize[i].instance.models[j].hasOne(sequelize[i].instance.models[r.model], options)
@@ -417,12 +416,14 @@ function createRelationship() {
                         sequelize[i].instance.models[j].hasMany(sequelize[i].instance.models[r.model], options)
                     }break;
                     case 'BelongsToMany':{                    
-                        const tableName = Object.keys(models).reduce((acc,curr)=>{
-                            if(models[curr].relationship.some(x=> x.association == 'BelongsToMany' && (x.model == r.model || x.model == j)))
-                                acc.push(curr)
-                            return acc
-                        }, [])
-                        options.through = tableName.join('_')
+                        const key1 = `${models[j].table}_${r.model}`
+                        const key2 = `${r.model}_${models[j].table}`
+                        if(!belongsToManyRelation[key1] && !belongsToManyRelation[key2]){
+                            options.through = key1
+                            belongsToManyRelation[key1] = key1
+                        } else {
+                            options.through = belongsToManyRelation[key1] || belongsToManyRelation[key2]
+                        }
                         sequelize[i].instance.models[j].belongsToMany(sequelize[i].instance.models[r.model], options)
                     }break;
                 }
