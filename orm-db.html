@@ -706,7 +706,7 @@ and then proceed to perform all database operations.
 ### Operation Types
 1. **Raw**: When queries are very complex and you can't handle them with the graphical interface, you can use this type of node to make direct queries to the database in SQL language. 
 It has a 'Data' field that allows variable replacements in the query; refer to the Sequelize documentation for more details [Raw Queries](https://sequelize.org/docs/v6/core-concepts/raw-queries/). 
-It's important to mention that it only supports replacements and not 'Bind Parameters'.
+It's important to mention that it only supports replacements and not 'Bind Parameters'. It is also possible to execute queries dynamically by passing msg.rawQuery to the node of type "Raw", where "msg.rawQuery" is the complete query to be executed.
 2. **Find All**: Searches in the selected model for all elements of the table. It allows filtering the information by including a 'Where' clause where the expressions can be dynamic fields passed in the input messages. 
 If the 'Attributes' input does not have any fields selected, it will select all fields of the table. The 'Limit' and 'Offset' inputs will not be functional while set to 'false'; 
 otherwise, they can be used with dynamic data from the input messages.

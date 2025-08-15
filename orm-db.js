@@ -199,7 +199,7 @@ module.exports = function(RED) {
                         if( node.dataType != 'bool' ){
                             options.replacements = node.dataType == 'json' ? RED.util.evaluateNodeProperty(this.data, 'json', this) : getValueByIndex(msg, this.data)
                         }
-                        const result = await sequelizeInstance.query(this.rawQuery, options)
+                        const result = await sequelizeInstance.query(msg.rawQuery || this.rawQuery, options)
                         msg.payload = result[0]
                     }break;
                     case 'count':{
