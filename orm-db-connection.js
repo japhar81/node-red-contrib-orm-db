@@ -12,6 +12,11 @@ module.exports = function(RED) {
         this.dialectOptions = config.dialectOptions
         this.dialectOptionsType = config.dialectOptionsType
         this.logging = config.logging
+        this.poolMin = config.poolMin
+        this.poolMax = config.poolMax
+        this.poolIdle = config.poolIdle
+        this.poolAcquire = config.poolAcquire
+        this.poolEvict = config.poolEvict
     }
     RED.nodes.registerType("orm-db-connection",Connection);
 }

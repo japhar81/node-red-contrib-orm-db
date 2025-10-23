@@ -300,7 +300,12 @@ function getDatabaseNodes(RED) {
                         password: node.password,
                         database: node.database,
                         dialectOptions: node.dialectOptions,
-                        logging: node.logging
+                        logging: node.logging,
+                        poolMin: node.poolMin,
+                        poolMax: node.poolMax,
+                        poolIdle: node.poolIdle,
+                        poolAcquire: node.poolAcquire,
+                        poolEvict: node.poolEvict
                     },
                     models: []
                 }
@@ -322,7 +327,12 @@ function getDatabaseNodes(RED) {
                         password: server.password,
                         database: server.database,
                         dialectOptions: node.dialectOptions,
-                        logging: node.logging
+                        logging: node.logging,
+                        poolMin: server.poolMin,
+                        poolMax: server.poolMax,
+                        poolIdle: server.poolIdle,
+                        poolAcquire: server.poolAcquire,
+                        poolEvict: server.poolEvict
                     },
                     models: []
                 }
@@ -349,18 +359,30 @@ function getKeyFromServer(server){
 
 function createSequelizeInstance(server){
     let logging = server.logging == 'enabled' ? console.log : false
+    
+    // Pool configuration
+    const poolConfig = {
+        min: server.poolMin !== undefined ? parseInt(server.poolMin) : 0,
+        max: server.poolMax !== undefined ? parseInt(server.poolMax) : 5,
+        idle: server.poolIdle !== undefined ? parseInt(server.poolIdle) : 10000,
+        acquire: server.poolAcquire !== undefined ? parseInt(server.poolAcquire) : 60000,
+        evict: server.poolEvict !== undefined ? parseInt(server.poolEvict) : 1000
+    }
+    
     return {
         instance: server.driver == 'sqlite' ? new Sequelize({
                 dialect: server.driver,
                 storage: server?.database,
                 dialectOptions: server.dialectOptions ? JSON.parse(server.dialectOptions) : {},
-                logging
+                logging,
+                pool: poolConfig
             }) : new Sequelize(server?.database, server?.username, server?.password, {
                 host: server?.host,
                 port: server?.port,
                 dialect: server.driver,
                 dialectOptions: server.dialectOptions ? JSON.parse(server.dialectOptions) : {},
-                logging
+                logging,
+                pool: poolConfig
             }),
         definitionModel: {},
         server: server

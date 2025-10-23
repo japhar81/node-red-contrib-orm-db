@@ -37,7 +37,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/asielh1n1/node-red-contrib-orm-db.git"
+    "url": "git+https://github.com/japhar81/node-red-contrib-orm-db.git"
   },
   "dependencies": {
     "sequelize": "^6.37.5",

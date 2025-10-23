@@ -36,6 +36,31 @@
         <label><i class="fa fa-terminal"></i> Logging</label>
         <input type="text" id="node-config-input-logging" placeholder="Logging">
     </div>
+    <div class="form-row">
+        <label><i class="fa fa-cogs"></i> Pool Settings</label>
+        <div style="margin-left: 20px;">
+            <div class="form-row">
+                <label for="node-config-input-poolMin">Min Connections</label>
+                <input type="number" id="node-config-input-poolMin" placeholder="0" min="0">
+            </div>
+            <div class="form-row">
+                <label for="node-config-input-poolMax">Max Connections</label>
+                <input type="number" id="node-config-input-poolMax" placeholder="5" min="1">
+            </div>
+            <div class="form-row">
+                <label for="node-config-input-poolIdle">Idle Timeout (ms)</label>
+                <input type="number" id="node-config-input-poolIdle" placeholder="10000" min="1000">
+            </div>
+            <div class="form-row">
+                <label for="node-config-input-poolAcquire">Acquire Timeout (ms)</label>
+                <input type="number" id="node-config-input-poolAcquire" placeholder="60000" min="1000">
+            </div>
+            <div class="form-row">
+                <label for="node-config-input-poolEvict">Evict Timeout (ms)</label>
+                <input type="number" id="node-config-input-poolEvict" placeholder="1000" min="100">
+            </div>
+        </div>
+    </div>
 </script>
 <script type="text/javascript">
     RED.nodes.registerType('orm-db-connection',{
@@ -66,7 +91,12 @@
                 
             } },
             dialectOptionsType: { value: 'json' },
-            logging: { value: 'enabled' }
+            logging: { value: 'enabled' },
+            poolMin: { value: 0 },
+            poolMax: { value: 5 },
+            poolIdle: { value: 10000 },
+            poolAcquire: { value: 60000 },
+            poolEvict: { value: 1000 }
         },
         label: function() {
             return this.name || this.driver;
@@ -133,6 +163,12 @@ This node allows you to configure access to databases.
 * Database: The name of the database. In the case of selecting the sqlite driver you must add the path and the name of the file ('path/to/database.sqlite'), if you leave this field blank, it is assumed that it will be created in memory.
 * Dialect Options: You can configure the specific settings for each driver individually. For more details, check the [documentation](https://sequelize.org/docs/v6/other-topics/dialect-specific-things/).
 * Logging: Enable or disable logs in the terminal.
+* Pool Settings: Configure connection pool settings for better performance and resource management:
+  - Min Connections: Minimum number of connections to maintain in the pool (default: 0)
+  - Max Connections: Maximum number of connections in the pool (default: 5)
+  - Idle Timeout: Time in milliseconds before an idle connection is closed (default: 10000)
+  - Acquire Timeout: Maximum time in milliseconds to get a connection from the pool (default: 60000)
+  - Evict Timeout: Time in milliseconds to check for idle connections (default: 1000)
 
 ### References
 
